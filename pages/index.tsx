@@ -10,8 +10,8 @@ export default function Home() {
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            id="firstName"
-            name="firstName"
+            id="valorFactura"
+            name="valorFactura"
             label="Valor factura"
             fullWidth
             variant="standard"
@@ -20,8 +20,8 @@ export default function Home() {
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            id="lastName"
-            name="lastName"
+            id="costoAccesorios"
+            name="costoAccesorios"
             label="Costo de accesorios"
             fullWidth
             variant="standard"
@@ -30,8 +30,8 @@ export default function Home() {
         <Grid item xs={12}>
           <TextField
             required
-            id="address1"
-            name="address1"
+            id="rentasDeposito"
+            name="rentasDeposito"
             label="Rentas en depósito"
             fullWidth
             variant="standard"
@@ -40,8 +40,8 @@ export default function Home() {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            id="address2"
-            name="address2"
+            id="fondoReserva"
+            name="fondoReserva"
             label="Fondo de reserva mensual"
             fullWidth
             variant="standard"
@@ -50,8 +50,8 @@ export default function Home() {
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            id="city"
-            name="city"
+            id="comisionApertura"
+            name="comisionApertura"
             label="Comisión por apertura"
             fullWidth
             variant="standard"
@@ -59,8 +59,8 @@ export default function Home() {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            id="state"
-            name="state"
+            id="seguroAnual"
+            name="seguroAnual"
             label="Seguro anual de contado"
             fullWidth
             variant="standard"
@@ -69,8 +69,8 @@ export default function Home() {
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            id="zip"
-            name="zip"
+            id="otrosGastos"
+            name="otrosGastos"
             label="Otros gastos"
             fullWidth
             variant="standard"
@@ -79,22 +79,20 @@ export default function Home() {
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            id="country"
-            name="country"
+            id="fondoReserva"
+            name="fondoReserva"
             label="Fondo de reserva"
             fullWidth
-            autoComplete="shipping country"
             variant="standard"
           />
         </Grid>
         <Grid item xs={12} sm={12}>
           <TextField
             required
-            id="country"
-            name="country"
+            id="valorResidual"
+            name="valorResidual"
             label="Valor residual"
             fullWidth
-            autoComplete="shipping country"
             variant="standard"
           />
         </Grid>
