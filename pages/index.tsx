@@ -41,9 +41,10 @@ export default function Home() {
   const [valorSeguroAnualC, setValorSeguroAnualC] = useState({ value: "", touched: false })
   const [valorOtrosGastos, setValorOtrosGastos] = useState({ value: "", touched: false })
   const [valorFondoReserva, setValorFondoReserva] = useState({ value: "", touched: false })
+  const [valorAnticipoArrendamiento, setValorAnticipoArrendamiento] = useState({ value:"", touched: false })
   const [valorResidual, setValorResidual] = useState({ value: "", touched: false })
   const [plazo, setPlazo] = useState({ value: "", touched: false })
-  const [cotizacion, setCotizacion] = useState({montoArrendamiento:0,comisionApSinIva:0})
+  const [cotizacion, setCotizacion] = useState({ montoArrendamiento:0, comisionApSinIva:0, valorResidual:0, rentaMensual:0 })
 
 
   const handleChangeVF = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,8 +53,9 @@ export default function Home() {
 
   const cotiza = () => {
     console.log('En Cotiza, el valor factura:', valorFactura)
-    let vFSInIVA = parseFloat(valorFactura.value) % 1.16
-    let valorResidualSinIva = vFSInIVA * .20
+    let vFSInIVA = parseFloat(valorFactura.value) / 1.16
+    let valorResidualSinIva = vFSInIVA * (parseFloat(valorResidual.value)/100)
+    console.log('valor residual',valorResidualSinIva)
     let otrosGastos = 0
     if(parseInt(plazo.value)==12){
       otrosGastos=9800
@@ -64,12 +66,60 @@ export default function Home() {
     }else if (parseInt(plazo.value)>=36 && parseInt(plazo.value)<=48){
       otrosGastos=22700
     }
-    let montoArrendamiento = parseFloat(valorFactura.value) + parseFloat(valorAccesorios.value) + (otrosGastos * 1.16)
+    // Monto de arrendamiento  = Valor factura + Accesorios + Otros gastos (con IVA) – Valor inicial del arrendamiento + Comisión por apertura con IVA
+    // Valor inicial del arrendamiento = Total pago inicial, - Seguro anual con IVA, -  Rentas en depósito con IVA
+
+    console.log('Anticipo: ', valorAnticipoArrendamiento.value)
+    console.log('Rentas en depósito: ', valorRentas.value)
+    console.log('Seguro anual: ', valorSeguroAnualC.value)
+    let valorInicialArrendamiento = parseFloat(valorAnticipoArrendamiento.value)
+    if( parseFloat(valorRentas.value) > 0 ){
+      valorInicialArrendamiento -= parseFloat(valorRentas.value)
+    }
+    if( parseFloat(valorSeguroAnualC.value) > 0 ){
+      valorInicialArrendamiento -= parseFloat(valorSeguroAnualC.value)
+    }
+    console.log('Aquí esta el valor inicial del arrendamiento', valorInicialArrendamiento)
+
+    let montoArrendamiento = parseFloat(valorFactura.value) + parseFloat(valorAccesorios.value) + (otrosGastos * 1.16) - valorInicialArrendamiento
+
     console.log('Monto Arrendamiento: ',montoArrendamiento)
-    let comisionAp = montoArrendamiento * parseInt(valorComisionApertura.value)/100
+    let comisionAp = montoArrendamiento * parseFloat(valorComisionApertura.value)/100
+    console.log('Comisión Con IVA',comisionAp)
     let comisionApSinIva = comisionAp/1.16
     console.log('Comision: ', comisionApSinIva)
-    setCotizacion(currentValue => ({ ...currentValue, montoArrendamiento , comisionApSinIva }))
+    let montoArrendamientoFinal = montoArrendamiento + comisionAp
+    console.log('Arrendamiento final',montoArrendamientoFinal)
+    let montoArrendamientoFinalSinIva = montoArrendamientoFinal/1.16
+    console.log('Arrendamiento Sin iva',montoArrendamientoFinalSinIva)
+
+    const PMT = (rate:number, nper:number, pv:number, fv:number, type:number) => {
+    let pmt, pvif;
+
+    fv || (fv = 0);
+    type || (type = 0);
+
+    if (rate === 0)
+      return -(pv + fv) / nper;
+
+    pvif = Math.pow(1 + rate, nper);
+    pmt = - rate * (pv * pvif + fv) / (pvif - 1);
+
+    if (type === 1)
+      pmt /= (1 + rate);
+    return pmt;
+  }
+ 
+  // let rate = (4 / 100) / 12; // 4% rate 
+  // let nper = 30 * 12; //30 years in months
+  // let pv = -400000 * (1 - (3.5 / 100)); //3.5%
+  
+  // call the function
+  // console.log('Renta mensual',PMT(0.0242, 12,-823141.90, 5000, 0))
+  let rentaMensual =PMT(0.0258, parseInt(plazo.value),-montoArrendamientoFinalSinIva.toFixed(2), 0, 0)
+  console.log('Renta mensual',PMT(0.0258, parseInt(plazo.value),-montoArrendamientoFinalSinIva.toFixed(2), 0, 0))
+    
+    setCotizacion(currentValue => ({ ...currentValue, montoArrendamiento:montoArrendamientoFinalSinIva , comisionApSinIva, valorResidual:valorResidualSinIva, rentaMensual }))
   }
 
   // const submitContact = async (event: FormEvent) => {
@@ -142,6 +192,22 @@ export default function Home() {
           </Grid>
           <Grid item xs={12}>
             <TextField
+              onChange={(e) => setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, value: e.target.value }))}
+              id="anticipoArrendamiento"
+              name="anticipoArrendamiento"
+              label="Anticipo del arrendamiento"
+              fullWidth
+              value={valorAnticipoArrendamiento.value}
+              variant="outlined"
+              onBlur={()=>setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, touched: true }))}
+              color={valorAnticipoArrendamiento.value==''? 'warning' : 'info'}
+              helperText={valorAnticipoArrendamiento.touched&&valorAnticipoArrendamiento.value==''? 'El valor del anticipo es requerido' : ''}
+            // color={errors.rentasDeposito? 'warning' : 'info'}
+            // helperText={errors.rentasDeposito? 'El valor de la factura es requerido' : ''}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
               onChange={(e) => setValorRentas(currentValue => ({ ...currentValue, value: e.target.value }))}
               id="rentasDeposito"
               name="rentasDeposito"
@@ -156,7 +222,7 @@ export default function Home() {
             // helperText={errors.rentasDeposito? 'El valor de la factura es requerido' : ''}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               onChange={(e) => setValorFondoReserva(currentValue => ({ ...currentValue, value: e.target.value }))}
               id="fondoReserva"
@@ -236,12 +302,12 @@ export default function Home() {
             // helperText={errors.fondoReservaMens? 'El valor de la factura es requerido' : ''}
             />
           </Grid>
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               onChange={(e) => setValorResidual(currentValue => ({ ...currentValue, value: e.target.value }))}
               id="valorResidual"
               name="valorResidual"
-              label="Valor residual"
+              label="Valor residual (porcentaje)"
               fullWidth
               value={valorResidual.value}
               variant="outlined"
@@ -252,7 +318,7 @@ export default function Home() {
             // helperText={errors.valorResidual? 'El valor de la factura es requerido' : ''}
             />
           </Grid>
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               onChange={(e) => setPlazo(currentValue => ({ ...currentValue, value: e.target.value }))}
               id="plazo"
@@ -274,12 +340,14 @@ export default function Home() {
         </Grid>
       </form>
       {
-        cotizacion.comisionApSinIva == 0 || isNaN(cotizacion.comisionApSinIva) && cotizacion.montoArrendamiento==0 || isNaN(cotizacion.montoArrendamiento) ? 
+        cotizacion.comisionApSinIva == 0 || isNaN(cotizacion.comisionApSinIva) && cotizacion.montoArrendamiento==0 || isNaN(cotizacion.montoArrendamiento) && cotizacion.valorResidual==0 || isNaN(cotizacion.valorResidual) && cotizacion.rentaMensual==0 || isNaN(cotizacion.rentaMensual)? 
           '':
         (
           <Container>
             <Typography>La comision por apertura es: {cotizacion.comisionApSinIva}</Typography>
             <Typography>El monto del arrendamiento es: {cotizacion.montoArrendamiento}</Typography>
+            <Typography>El valor residual del arrendamiento es: {cotizacion.valorResidual}</Typography>
+            <Typography>El valor de la renta mensual del arrendamiento es: {cotizacion.rentaMensual}</Typography>
           </Container>
         )
       }

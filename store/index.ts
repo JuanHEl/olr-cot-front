@@ -1,7 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
+import cotizacion from './slices/index';
 
 const store = configureStore({
     reducer:{
+        cotizacion
     }
 })
 

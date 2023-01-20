@@ -1,4 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
+
+interface CotState {
+    factura: string,
+    accesorios: string,
+    rentas: string,
+    fondoReservaMensual: string,
+    comisionApertura: string,
+    seguroAnual: string,
+    otrosGastos: string,
+    fondoReserva: string,
+    residual: string,
+    plazo: string
+  }
+  
 
 export const cotizacionSlice = createSlice({
     name: 'cotizacion',
@@ -15,21 +30,15 @@ export const cotizacionSlice = createSlice({
         plazo:'',
     },
     reducers: {
-        setCotizacion: (state,action) => {
-            state.factura             = action.payload,
-            state.accesorios          = action.payload,
-            state.rentas              = action.payload,
-            state.fondoReservaMensual = action.payload,
-            state.comisionApertura    = action.payload,
-            state.seguroAnual         = action.payload,
-            state.otrosGastos         = action.payload,
-            state.fondoReserva        = action.payload,
-            state.residual            = action.payload,
-            state.plazo               = action.payload
+        setCotizacion: ( state,{payload}:PayloadAction<CotState>) => {
+            return payload
+        },
+        setMoverPlazo: ( state , {payload}: PayloadAction<string>) => {
+            state.plazo = payload
         }
     }
 })
 
-export const { setCotizacion } = cotizacionSlice.actions
+export const { setCotizacion, setMoverPlazo } = cotizacionSlice.actions
 
 export default cotizacionSlice.reducer
