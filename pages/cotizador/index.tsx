@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { setCotizacion,setMoverPlazo } from '../../store/slices';
 import { RootState } from '../../store/index';
+import { url } from 'inspector';
+import { BaseForm } from '../../components/cards/cardForms/BaseForm';
 
 
 export default function cotizadorHome(){
@@ -32,7 +34,10 @@ export default function cotizadorHome(){
   // console.log('Imprimiendo el estado del useSelector',estado)
   return (
     <Container>
-        <Button onClick={() => dispatch(setCotizacion({
+      <Box>
+        <BaseForm/>
+      </Box>
+        {/* <Button onClick={() => dispatch(setCotizacion({
           factura:'hello',
           accesorios:'hello',
           rentas:'hello',
@@ -44,7 +49,7 @@ export default function cotizadorHome(){
           residual:'hello',
           plazo:'hello'
         })) }>hacer estado</Button>
-        <h1>El estado es: {plazo}</h1>
+        <h1>El estado es: {plazo}</h1> */}
     </Container>
   )
 }
