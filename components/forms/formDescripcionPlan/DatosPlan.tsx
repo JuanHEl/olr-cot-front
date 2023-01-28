@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Box, Typography, Slider, Container } from '@mui/material';
 import AirportShuttleRoundedIcon from '@mui/icons-material/AirportShuttleRounded';
 
-// constantes y funciones de COMISION POR APERTURA
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -14,17 +13,15 @@ const MenuProps = {
   },
 };
 
+// constantes y funciones de COMISION POR APERTURA
 const comisiones = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
+    '0',
+    '1',
+    '2',
+    '2.5',
+    '3',
+    '3.5',
+    '4',
   ];
 
 
@@ -69,16 +66,11 @@ const marks = [
 
 // Constantes y funciones de PLAN
 const planes = [
-  'Plan 1',
-  'Plan 2',
-  'Plan 3',
-  'Plan 4',
-  'Plan 5',
-  'Plan 6',
-  'Plan 7',
-  'Plan 8',
-  'Plan 9',
-  'Plan 10',
+  'Plan A',
+  'Plan B',
+  'Plan ALPHA',
+  'Plan BETA',
+  'Plan GAMMA',
 ];
 
 
@@ -86,32 +78,16 @@ const planes = [
 
 // Constantes y funciones de TIPO DE SEGURO
 const seguros = [
-  'Seguro 1',
-  'Seguro 2',
-  'Seguro 3',
-  'Seguro 4',
-  'Seguro 5',
-  'Seguro 6',
-  'Seguro 7',
-  'Seguro 8',
-  'Seguro 9',
-  'Seguro 10',
+  'Incluido',
+  'No incluido',
 ];
 
   
 
 // Constantes y funciones de TIPO DE RESIDUAL
 const residuales = [
-  'Tipo residual 1',
-  'Tipo residual 2',
-  'Tipo residual 3',
-  'Tipo residual 4',
-  'Tipo residual 5',
-  'Tipo residual 6',
-  'Tipo residual 7',
-  'Tipo residual 8',
-  'Tipo residual 9',
-  'Tipo residual 10',
+  'Porcentaje',
+  'Cantidad',
 ];
 
 

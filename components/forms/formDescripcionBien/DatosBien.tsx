@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Container, Grid, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import React, { ChangeEvent, useState } from 'react'
+import { Container, Grid, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Button, Input } from '@mui/material';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -30,16 +30,12 @@ const marcas = [
 
 // constantes y funciones de MODELOS
 const modelos = [
-    'A 1',
-    'A 3',
-    'A 4',
-    'A 6',
-    'Q 2',
-    'Q 3',
-    'Q 5',
-    'Q 7',
-    'TT',
-    'R8',
+    '2018',
+    '2019',
+    '2020',
+    '2021',
+    '2022',
+    '2023',
   ];
 
   
@@ -80,6 +76,12 @@ const estados = [
   ];
 
 // Función para agregar un input
+type TipoAccesorios = {
+    id:number;
+    nombre: string;
+    descripcion: string;
+    valor: number;
+  }
 
 export const DatosBien = () => {
     
@@ -101,7 +103,39 @@ export const DatosBien = () => {
       setEstado(event.target.value as string);
     };
 
-    // Lista que guarda el contenido de los inputs
+    // Lista que guarda el contenido de los ACCESORIOS
+    const [accesorios, setAccesorios] = useState<TipoAccesorios[]>([])
+    const [count, setCount] = useState(0);
+
+    const handleRemoveItem = (id:number) => {
+        console.log(id)
+        setAccesorios((listaAccesorios) =>
+        listaAccesorios.filter((newAccesorio) => newAccesorio.id !== id)
+        )
+        // setAccesorios(accesorios.slice(accesorios.indexOf(index)))
+    }
+    const click = (accesorio: {nombre:string, descripcion:string, valor:number}) => {
+        console.log('Accesorios: ',accesorios.length)
+        console.log('Conteo en: ',count)
+        setAccesorios(prevAccesorio => [
+            ...prevAccesorio,
+            { id:count ,nombre: accesorio.nombre, descripcion: accesorio.descripcion, valor:accesorio.valor},
+        ])
+        setCount(count+1)
+    }
+
+    const updateData = (e:ChangeEvent<HTMLInputElement  | HTMLTextAreaElement>,id:number) => {
+        console.log(e)
+        const keyname = e.target.name
+        const value = e.target.value
+        const auxAccesorios = [...accesorios]
+        const index = auxAccesorios.findIndex((accesorio) => accesorio.id === id)
+        if(index<0){
+            return  ''
+        }
+        auxAccesorios[index][keyname] = value
+        setAccesorios(auxAccesorios)
+    }
 
   return (
     <Container>
@@ -233,8 +267,35 @@ export const DatosBien = () => {
                 </Grid>
             </Grid>
 
-            <Grid item xs={12} sm={6} sx={{ textAlign:'center' }}>
-                <h1>Hello</h1>
+            <Grid container item spacing={3} xs={12} sm={6} sx={{ textAlign:'center' }}>
+                <Grid item xs={12} sx={{ textAlign:'center' }}>
+
+                    {accesorios&&accesorios.length>0 && accesorios.map(({id,nombre,descripcion,valor}, index) => {
+                        return (
+                            <Grid container border={1} borderColor='primary' borderRadius={2} key={index} p={1} m={1}>
+                                <Grid item xs={12} sx={{ textAlign:'center', width:'100%' }}>
+                                    <TextField label='Nombre' name='nombre' value={nombre} onChange={(e)=> updateData(e,id)}/>
+                                </Grid>
+                                <Grid item xs={12}sx={{ textAlign:'center' }}>
+                                    <TextField label='Descripción' name='descripcion' value={descripcion} onChange={(e)=> updateData(e,id)}/>
+                                </Grid>
+                                <Grid item xs={12}sx={{ textAlign:'center' }}>
+                                    <TextField label='Valor' name='valor' value={valor} onChange={(e)=> updateData(e,id)}/>
+                                </Grid>
+                                <Button variant='outlined' color='error' onClick={()=>handleRemoveItem(id)}
+                                >
+                                    Delete
+                                </Button>
+                            </Grid>
+                        );
+                    })}
+
+                </Grid>
+                <Grid item xs={12}sx={{ textAlign:'center' }}>
+                    <Button variant='contained' onClick={() =>click({ nombre:'', descripcion:'', valor:0 }) }>
+                        + Añadir accesorio
+                    </Button>
+                </Grid>
             </Grid>
         </Grid>
     </Container>
