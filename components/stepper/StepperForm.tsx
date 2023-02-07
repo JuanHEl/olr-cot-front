@@ -9,10 +9,49 @@ import { DatosCliente } from '../forms/formDatosCliente';
 import { Container } from '@mui/system';
 import { DatosPlan } from '../forms/formDescripcionPlan/DatosPlan';
 import { DatosBien } from '../forms/formDescripcionBien/DatosBien';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/index';
+
+
 
 const steps = ['Datos del cliente', 'Descripción del bien', 'Descripción del plan'];
 
 export const StepperForm = () => {
+
+  
+  // Se obtiene los valores del State Global del cliente
+  const { 
+      cliente,
+      correoCliente,
+      enAtencionA,
+      promotor,
+      telefono,
+      tipoCliente } = useSelector((stateCliente:RootState)=>stateCliente.cliente)
+
+  // Se obtiene los valores del State Global del plan
+  const {
+      plazo,
+      comisionApertura,
+      anticipoArrendamiento,
+      plan,
+      tipoSeguro,
+      rentasDeposito,
+      tipoResidual,
+      fondoReserva,
+      valorResidualConvenido } = useSelector((statePlan:RootState)=>statePlan.plan)
+
+   // Se obtiene los valores del State Global del bien
+   const {
+      tipoActivo,
+      cantidadUnidades,
+      marca,
+      modelo,
+      version,
+      estado,
+      precioActivo,
+      accesorios } = useSelector((stateBien: RootState) => stateBien.bien)
+
+
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState<{
       [k: number]: boolean;
@@ -55,6 +94,8 @@ export const StepperForm = () => {
     const handleComplete = () => {
       const newCompleted = completed;
       newCompleted[activeStep] = true;
+      console.log('Completed: ', completed)
+      console.log('new completed: ',newCompleted)
       setCompleted(newCompleted);
       handleNext();
     };
@@ -97,35 +138,42 @@ export const StepperForm = () => {
               (activeStep+1)==3 ?
                 <DatosPlan/> : ''
             }
-            <Typography sx={{ mt: 2, mb: 1, py: 1 }}>
-              Step {activeStep + 1}
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Box sx={{ flex: '1 1 auto' }} />
-              <Button onClick={handleNext} sx={{ mr: 1 }}>
-                Next
-              </Button>
-              {activeStep !== steps.length &&
-                (completed[activeStep] ? (
-                  <Typography variant="caption" sx={{ display: 'inline-block' }}>
-                    Step {activeStep + 1} already completed
-                  </Typography>
-                ) : (
-                  <Button onClick={handleComplete}>
-                    {completedSteps() === totalSteps() - 1
-                      ? 'Finish'
-                      : 'Complete Step'}
+            <Container>
+              {/* <Typography sx={{ mt: 2, mb: 1, py: 1 }}>
+                Step {activeStep + 1}
+              </Typography> */}
+              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                <Box sx={{ flex: '1 1 auto' }} />
+                {
+                  activeStep>0?
+                  <Button
+                    color="inherit"
+                    variant='contained'
+                    disabled={activeStep === 0}
+                    onClick={handleBack}
+                    sx={{ mr: 1 }}
+                  >
+                    Atrás
                   </Button>
-                ))}
-            </Box>
+                   : ''
+                }
+                <Button onClick={handleNext} variant='contained' color='success' sx={{ mr: 1 }}>
+                  Siguiente
+                </Button>
+                {activeStep !== steps.length &&
+                  (completed[activeStep] ? (
+                    <Typography variant="caption" sx={{ display: 'inline-block' }}>
+                      Step {activeStep + 1} already completed
+                    </Typography>
+                  ) : (
+                    <Button onClick={handleComplete} variant='contained'>
+                      {completedSteps() === totalSteps() - 1
+                        ? 'Cotizar'
+                        : 'Complete'}
+                    </Button>
+                  ))}
+              </Box>
+            </Container>
           </React.Fragment>
         )}
       </div>

@@ -1,5 +1,8 @@
-import React, { FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useState } from 'react'
 import { Button, Container, Grid, TextField, Typography, Box, Slider, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { setClCliente, setCliente, setCorreoCliente, setEnAtencionA, setPromotor, setTelefono, setTipoCliente } from '../../../store/slices/datosCliente';
+import { RootState } from '../../../store/index';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -20,11 +23,55 @@ const tipoClientes = [
 
 export const DatosCliente = () => {
 
+  // Se declara el dispatch para poder modificar los estados globales
+  const dispatch = useDispatch()
   
+  // Se obtiene los valores del State Global
+  const { cliente,correoCliente,enAtencionA,promotor,telefono,tipoCliente } = useSelector((state:RootState)=>state.cliente)
+
+  
+    
+    // Constantes y funciones de CLIENTES
+    const [clienteState, setClienteState] = useState({ value: "", touched: false })
+    const handleChangeCliente = (event:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setClienteState(currentValue => ({...currentValue, value: event.target.value}))
+      dispatch(setClCliente(event.target.value))
+    }
+
+    // Constantes y funciones de CORREO
+    const [correoState, setCorreoState] = useState({ value: "", touched: false })
+    const handleChangeCorreo = (event:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setCorreoState(currentValue => ({...currentValue, value: event.target.value}))
+      dispatch(setCorreoCliente(event.target.value))
+    }
+
+    // Constantes y funciones de EN ATENCIÓN A 
+    const [enAtencionAState, setEnAtencionAState] = useState({ value: "", touched: false })
+    const handleChangeEnAtencionA = (event:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setEnAtencionAState(currentValue => ({...currentValue, value: event.target.value}))
+      dispatch(setEnAtencionA(event.target.value))
+    }
+    
+    // Constantes y funciones de PROMOTOR
+    const [promotorState, setPromotorState] = useState({ value: "", touched: false })
+    const handleChangePromotor = (event:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setPromotorState(currentValue => ({...currentValue, value: event.target.value}))
+      dispatch(setPromotor(event.target.value))
+    }
+    
+    // Constantes y funciones de TELEFONO
+    const [telefonoState, setTelefonoState] = useState({ value: "", touched: false })
+    const handleChangeTelefono = (event:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setTelefonoState(currentValue => ({...currentValue, value: event.target.value}))
+      dispatch(setTelefono(event.target.value))
+    }
+
     // Constantes y funciones de TIPOS DE CLIENTES
-    const [tipoCliente, setTipoCliente] = useState('')
+    const [tipoClienteState, setTipoClienteState] = useState({ value: "", touched: false })
     const handleChangeTipoCliente = (event: SelectChangeEvent) => {
-      setTipoCliente(event.target.value as string);
+      setTipoClienteState(currentValue => ({ ...currentValue, value: event.target.value }));
+      dispatch(setTipoCliente(event.target.value))
+      // dispatch(setCliente({tipoCliente:event.target.value}))
     };
 
     // const [valorFactura, setValorFactura] = useState({ value: "", touched: false })
@@ -113,17 +160,22 @@ export const DatosCliente = () => {
     // }
 
 
+    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault() 
+    }
+
   return (
     <Container>
-    <Grid container spacing={3} sx={{ position:'relative' }}>
+      <form onSubmit={onSubmit}>
+      <Grid container spacing={3} sx={{ position:'relative' }}>
         <Grid item xs={12} sm={6} sx={{display: "flex", justifyContent: "center"}}>
             <TextField
-            // onChange={(e) => setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, value: e.target.value }))}
+            onChange={handleChangeCliente}
             id="cliente"
             name="cliente"
             label="Cliente"
             fullWidth
-            // value={valorAnticipoArrendamiento.value}
+            value={cliente}
             // variant="outlined"
             // onBlur={()=>setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, touched: true }))}
             // color={valorAnticipoArrendamiento.value==''? 'warning' : 'info'}
@@ -132,20 +184,18 @@ export const DatosCliente = () => {
         </Grid>
 
         <Grid item xs={12} sm={6}>
-
         <TextField
-            // onChange={(e) => setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, value: e.target.value }))}
+            onChange={handleChangeEnAtencionA}
             id="enAtencionA"
             name="enAtencionA"
             label="En atención a"
             fullWidth
-            // value={valorAnticipoArrendamiento.value}
+            value={enAtencionA}
             // variant="outlined"
             // onBlur={()=>setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, touched: true }))}
             // color={valorAnticipoArrendamiento.value==''? 'warning' : 'info'}
             // helperText={valorAnticipoArrendamiento.touched&&valorAnticipoArrendamiento.value==''? 'El valor del anticipo es requerido' : ''}
             />
-
         </Grid>
 
         <Grid item xs={12} sm={6}>
@@ -172,12 +222,12 @@ export const DatosCliente = () => {
         <Grid item xs={12} sm={6}>
 
         <TextField
-            // onChange={(e) => setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, value: e.target.value }))}
+            onChange={handleChangePromotor}
             id="promotor"
             name="promotor"
             label="Promotor"
             fullWidth
-            // value={valorAnticipoArrendamiento.value}
+            value={promotor}
             // variant="outlined"
             // onBlur={()=>setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, touched: true }))}
             // color={valorAnticipoArrendamiento.value==''? 'warning' : 'info'}
@@ -189,12 +239,12 @@ export const DatosCliente = () => {
         <Grid item xs={12} sm={6}>
 
         <TextField
-            // onChange={(e) => setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, value: e.target.value }))}
+            onChange={handleChangeCorreo}
             id="correo"
             name="correo"
             label="Correo"
             fullWidth
-            // value={valorAnticipoArrendamiento.value}
+            value={correoCliente}
             // variant="outlined"
             // onBlur={()=>setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, touched: true }))}
             // color={valorAnticipoArrendamiento.value==''? 'warning' : 'info'}
@@ -205,19 +255,21 @@ export const DatosCliente = () => {
 
         <Grid item xs={12} sm={6}>
             <TextField
-            // onChange={(e) => setValorRentas(currentValue => ({ ...currentValue, value: e.target.value }))}
+            onChange={handleChangeTelefono}
             id="telefono"
             name="telefono"
             label="Teléfono"
             fullWidth
-            // value={valorRentas.value}
+            value={telefono}
             // variant="outlined"
             // onBlur={()=>setValorRentas(currentValue => ({ ...currentValue, touched: true }))}
             // color={valorRentas.value==''? 'warning' : 'info'}
             // helperText={valorRentas.touched&&valorRentas.value==''? 'El valor de las rentas es requerido' : ''}
             />
         </Grid>
-        </Grid>
+      </Grid>
+
+      </form>
     </Container>
 
     // <Container>

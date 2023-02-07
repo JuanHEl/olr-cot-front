@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Box, Typography, Slider, Container } from '@mui/material';
 import AirportShuttleRoundedIcon from '@mui/icons-material/AirportShuttleRounded';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../store/index';
+import { setAnticipoArrendamiento, setComisionApertura, setFondoReserva, setPlan, setPlazo, setRentasDeposito, setTipoResidual, setTipoSeguro, setValorResidualConvenido } from '../../../store/slices/datosPlan';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -59,9 +62,9 @@ const marks = [
 //     return `${scaledValue} ${units[unitIndex]}`;
 //   }
   
-  function calculatePlazo(value: number) {
-    return 2 ** value;
-  }
+  // function calculatePlazo(value: number) {
+  //   return 2 ** value;
+  // }
   
 
 // Constantes y funciones de PLAN
@@ -92,36 +95,87 @@ const residuales = [
 
 
 export const DatosPlan = () => {
+
+    // Se declara el dispatch para poder modificar los estados globales
+    const dispatch = useDispatch()
+    
+    // Se obtiene los valores del State Global
+    const {
+      plazo,
+      comisionApertura,
+      anticipoArrendamiento,
+      plan,
+      tipoSeguro,
+      rentasDeposito,
+      tipoResidual,
+      fondoReserva,
+      valorResidualConvenido           
+     } = useSelector((state:RootState)=>state.plan)
+
+
     // Constantes y funciones de COMISION POR APERTURA
-    const [comisionApertura, setComisionApertura] = useState('');
+    const [comisionAperturaState, setComisionAperturaState] = useState({ value: "", touched: false });
     const handleChange = (event: SelectChangeEvent) => {
-      setComisionApertura(event.target.value as string);
+      setComisionAperturaState(currentValue => ({...currentValue, value:event.target.value}));
+      dispatch(setComisionApertura(event.target.value))
     };
 
     // Constantes y funciones de PLAZO
-    const [plazo, setPlazo] = React.useState<number>(12);
+    const [plazoState, setPlazoState] = React.useState<number>(24);
     const handleChangeSlider = (event: Event, newValue: number | number[]) => {
         if (typeof newValue === 'number') {
-        setPlazo(newValue);
+          setPlazoState(newValue);
+          dispatch(setPlazo(newValue))
         }
     };
 
     // Constantes y funciones de PLAN
-    const [plan, setPlan] = useState('')
+    const [planState, setPlanState] = useState({ value: "", touched: false })
     const handleChangePlan = (event: SelectChangeEvent) => {
-      setPlan(event.target.value as string);
+      setPlanState(currentValue => ({...currentValue, value:event.target.value}));
+      dispatch(setPlan(event.target.value))
     };
     
     // Constantes y funciones de TIPO DE SEGUROS
-    const [tipoSeguro, setTipoSeguro] = useState('')
+    const [tipoSeguroState, setTipoSeguroState] = useState({ value: "", touched: false })
     const handleChangeTipoSeguro = (event: SelectChangeEvent) => {
-      setTipoSeguro(event.target.value as string);
+      setTipoSeguroState(currentValue => ({...currentValue, value:event.target.value}));
+      dispatch(setTipoSeguro(event.target.value))
     };
     
     // Constantes y funciones de TIPO DE RESIDUAL
-    const [tipoResidual, setTipoResidual] = useState('')
+    const [tipoResidualState, setTipoResidualState] = useState({ value: "", touched: false })
     const handleChangeTipoResidual = (event: SelectChangeEvent) => {
-      setTipoResidual(event.target.value as string);
+      setTipoResidualState(currentValue => ({...currentValue, value:event.target.value}));
+      dispatch(setTipoResidual(event.target.value))
+    };
+    
+    // Constantes y funciones de ANTICIPO ARRENDAMIENTO
+    const [anticipoArrendamientoState, setAnticipoArrendamientoState] = useState({ value: 0, touched: false });
+    const handleChangeAnticipoArrendamiento = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setAnticipoArrendamientoState(currentValue => ({...currentValue, value:Number(event.target.value)}));
+      dispatch(setAnticipoArrendamiento(Number(event.target.value)))
+    };
+    
+    // Constantes y funciones de RENTAS EN DEPÓSITO
+    const [rentasDepositoState, setRentasDepositoState] = useState({ value: 0, touched: false });
+    const handleChangeRentasDeposito = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setRentasDepositoState(currentValue => ({...currentValue, value:Number(event.target.value)}));
+      dispatch(setRentasDeposito(Number(event.target.value)))
+    };
+    
+    // Constantes y funciones de FONDO DE RESERVA
+    const [fondoReservaState, setFondoReservaState] = useState({ value: 0, touched: false });
+    const handleChangeFondoReserva = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setFondoReservaState(currentValue => ({...currentValue, value:Number(event.target.value)}));
+      dispatch(setFondoReserva(Number(event.target.value)))
+    };
+    
+    // Constantes y funciones de VALOR RESIDUAL CONVENIDO
+    const [valorResidualConvenidoState, setValorResidualConvenidoState] = useState({ value: 0, touched: false });
+    const handleChangeValorResidualConvenido = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setValorResidualConvenidoState(currentValue => ({...currentValue, value:Number(event.target.value)}));
+      dispatch(setValorResidualConvenido(Number(event.target.value)))
     };
 
   return (
@@ -191,12 +245,12 @@ export const DatosPlan = () => {
 
             <Grid item xs={12} sm={6}>
                 <TextField
-                // onChange={(e) => setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, value: e.target.value }))}
+                onChange={handleChangeAnticipoArrendamiento}
                 id="anticipoArrendamiento"
                 name="anticipoArrendamiento"
                 label="Anticipo del arrendamiento"
                 fullWidth
-                // value={valorAnticipoArrendamiento.value}
+                value={anticipoArrendamiento}
                 // variant="outlined"
                 // onBlur={()=>setValorAnticipoArrendamiento(currentValue => ({ ...currentValue, touched: true }))}
                 // color={valorAnticipoArrendamiento.value==''? 'warning' : 'info'}
@@ -252,12 +306,12 @@ export const DatosPlan = () => {
 
             <Grid item xs={12} sm={6}>
                 <TextField
-                // onChange={(e) => setValorRentas(currentValue => ({ ...currentValue, value: e.target.value }))}
+                onChange={handleChangeRentasDeposito}
                 id="rentasDeposito"
                 name="rentasDeposito"
                 label="Rentas en depósito"
                 fullWidth
-                // value={valorRentas.value}
+                value={rentasDeposito}
                 // variant="outlined"
                 // onBlur={()=>setValorRentas(currentValue => ({ ...currentValue, touched: true }))}
                 // color={valorRentas.value==''? 'warning' : 'info'}
@@ -290,12 +344,12 @@ export const DatosPlan = () => {
             
             <Grid item xs={12} sm={6}>
                 <TextField
-                // onChange={(e) => setValorFondoReservaMensual(currentValue => ({ ...currentValue, value: e.target.value }))}
+                onChange={handleChangeFondoReserva}
                 id="fondoReservaMens"
                 name="fondoReservaMens"
                 label="Fondo de reserva"
                 fullWidth
-                // value={valorFondoReservaMensual.value}
+                value={fondoReserva}
                 // variant="outlined"
                 // onBlur={()=>setValorFondoReservaMensual(currentValue => ({ ...currentValue, touched: true }))}
                 // color={valorFondoReservaMensual.value==''? 'warning' : 'info'}
@@ -305,12 +359,12 @@ export const DatosPlan = () => {
 
             <Grid item xs={12} sm={6}>
                 <TextField
-                // onChange={(e) => setValorOtrosGastos(currentValue => ({ ...currentValue, value: e.target.value }))}
+                onChange={handleChangeValorResidualConvenido}
                 id="valorResidual"
                 name="valorResidual"
                 label="Valor residual convenido"
                 fullWidth
-                // value={valorOtrosGastos.value}
+                value={valorResidualConvenido}
                 // variant="outlined"
                 // onBlur={()=>setValorOtrosGastos(currentValue => ({ ...currentValue, touched: true }))}
                 // color={valorOtrosGastos.value==''? 'warning' : 'info'}

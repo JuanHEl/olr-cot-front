@@ -1,9 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
 import cotizacion from './slices/index';
+import cliente from './slices/datosCliente'
+import bien from './slices/datosBien'
+import plan from './slices/datosPlan'
 
 const store = configureStore({
     reducer:{
-        cotizacion
+        cotizacion,
+        cliente,
+        bien,
+        plan
     }
 })
 
