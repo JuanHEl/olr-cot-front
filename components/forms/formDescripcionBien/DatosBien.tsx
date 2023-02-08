@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
-import { Container, Grid, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Button, Input, Box } from '@mui/material';
+import { Container, Grid, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store/index';
 import { deleteAccesorios, setAccesorios, setCantidadUnidades, setEstado, setMarca, setModelo, setPrecioActivo, setTipoActivo, setVersion, updateAccesorios } from '../../../store/slices/datosBien';
@@ -81,12 +81,6 @@ const estados = [
 ];
 
 // Función para agregar un input
-type TipoAccesorios = {
-    id: string;
-    nombre: string;
-    descripcion: string;
-    valor: number;
-}
 
 export const DatosBien = () => {
 
@@ -155,47 +149,59 @@ export const DatosBien = () => {
     };
 
     // Lista que guarda el contenido de los ACCESORIOS
-    const [accesoriosState, setAccesoriosState] = useState<TipoAccesorios[]>([])
+    // const [accesoriosState, setAccesoriosState] = useState<IUaccesorios[]>(accesorios)
     const [count, setCount] = useState(0);
 
     const handleRemoveItem = (id: string) => {
         // console.log(id)
-        setAccesoriosState((listaAccesorios) =>
-            listaAccesorios.filter((newAccesorio) => newAccesorio.id !== id)
-        )
+        // setAccesoriosState((listaAccesorios) =>
+        //     listaAccesorios.filter((newAccesorio) => newAccesorio.idAccesorio !== id)
+        // )
         dispatch(deleteAccesorios(id))
         // setAccesorios(accesorios.slice(accesorios.indexOf(index)))
     }
 
     const click = (accesorio: { nombre: string, descripcion: string, valor: number }) => {
-
         const claveUnica = uuid().slice(0,8)
         // const small_id = claveUnica.slice(0,8)
         // console.log(claveUnica)
 
         // console.log('Accesorios: ', accesoriosState.length)
         // console.log('Conteo en: ', count)
-        setAccesoriosState(prevAccesorio => [
-            ...prevAccesorio,
-            { id: claveUnica, nombre: accesorio.nombre, descripcion: accesorio.descripcion, valor: accesorio.valor },
-        ])
+        // setAccesoriosState(prevAccesorio => [
+        //     ...prevAccesorio,
+        //     { idAccesorio: claveUnica, nombreAccesorio: accesorio.nombre, descripcionAccesorio: accesorio.descripcion, valorAccesorio: accesorio.valor },
+        // ])
         dispatch(setAccesorios({ idAccesorio: claveUnica, nombreAccesorio: accesorio.nombre, descripcionAccesorio: accesorio.descripcion, valorAccesorio: accesorio.valor }))
-        setCount(count + 1)
+        // setCount(count + 1)
     }
 
     const updateData = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, id: string) => {
         // console.log(e)
+        // console.log('EL ESTADO GLOBAL: ', accesorios)
+        // console.log('Estado useSTATE: ',accesoriosState)
+        // console.log('Tipo del accesorio: ', typeof(accesorios))
+        // console.log('Tipo del accesorioState: ', typeof(accesoriosState))
         const keyname = e.target.name
         const value = e.target.value
-        const auxAccesorios = [...accesoriosState]
-        const index = auxAccesorios.findIndex((accesorio) => accesorio.id === id)
-        if (index < 0) {
-            return ''
-        }
-        auxAccesorios[index][keyname] = value
-        setAccesoriosState(auxAccesorios)
+        // console.log('keyname: ',keyname)
+        // console.log('value: ',value)
+        dispatch(updateAccesorios({keyname,value,id}))
+        // let auxAccesorios = [...accesorios]
+        // // console.log('AuxAccesoriosState: ', auxAccesorios)
+        // const index = auxAccesorios.findIndex((accesorio) => accesorio.idAccesorio === id)
+        // console.log('Index: ',index)
+        // if (index < 0) {
+        //     console.log('Entra en la condicional')
+        //     return ''
+        // }
+        // console.log('AuxAccesorios: ',auxAccesorios)
+        // console.log('Aux En Index: ',auxAccesorios[index][keyname])
+        // auxAccesorios[index][keyname] = value
+        // console.log('Aux En Index, después de la asignación: ',auxAccesorios[index][keyname])
+        // setAccesoriosState(auxAccesorios)
         // console.log('Auxiliar', auxAccesorios[0])
-        dispatch(updateAccesorios({ idAccesorio: auxAccesorios[index].id, descripcionAccesorio: auxAccesorios[index].descripcion, nombreAccesorio: auxAccesorios[index].nombre, valorAccesorio: auxAccesorios[index].valor }))
+        // dispatch(updateAccesorios({ idAccesorio: auxAccesorios[index].idAccesorio, descripcionAccesorio: auxAccesorios[index].descripcionAccesorio, nombreAccesorio: auxAccesorios[index].nombreAccesorio, valorAccesorio: auxAccesorios[index].valorAccesorio }))
     }
 
     return (
@@ -338,13 +344,13 @@ export const DatosBien = () => {
 
                                     <Typography>Accesorio #{index + 1}</Typography>
                                     <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                        <TextField label='Nombre' fullWidth name='nombre' value={nombreAccesorio} onChange={(e) => updateData(e, idAccesorio)} />
+                                        <TextField label='Nombre' fullWidth name='nombreAccesorio' value={nombreAccesorio} onChange={(e) => updateData(e, idAccesorio)} />
                                     </Grid>
                                     <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                        <TextField label='Descripción' fullWidth name='descripcion' value={descripcionAccesorio} onChange={(e) => updateData(e, idAccesorio)} />
+                                        <TextField label='Descripción' fullWidth name='descripcionAccesorio' value={descripcionAccesorio} onChange={(e) => updateData(e, idAccesorio)} />
                                     </Grid>
                                     <Grid item xs={12} sx={{ textAlign: 'center' }}>
-                                        <TextField label='Valor' fullWidth name='valor' value={valorAccesorio} onChange={(e) => updateData(e, idAccesorio)} />
+                                        <TextField label='Valor' fullWidth name='valorAccesorio' value={valorAccesorio} onChange={(e) => updateData(e, idAccesorio)} />
                                     </Grid>
                                     <Button variant='outlined' sx={{ marginTop: 1 }} color='error' onClick={() => handleRemoveItem(idAccesorio)}
                                     >

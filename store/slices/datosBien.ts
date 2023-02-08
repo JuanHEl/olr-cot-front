@@ -10,7 +10,7 @@ interface bien {
     precioActivo: number,
     accesorios: IUaccesorios[]
 }
-interface IUaccesorios {
+export interface IUaccesorios {
     idAccesorio:string
     nombreAccesorio:string,
     descripcionAccesorio:string,
@@ -57,10 +57,10 @@ export const bienSlice = createSlice({
         setAccesorios: ( state:bien, {payload}:PayloadAction<IUaccesorios> ) => {
             state.accesorios.push(payload)
         },
-        updateAccesorios: ( state:bien, {payload}:PayloadAction<IUaccesorios> ) => {
-            const index = state.accesorios.findIndex(accesorio=>accesorio.idAccesorio===payload.idAccesorio)
+        updateAccesorios: ( state:bien, {payload:{id,keyname,value}}:PayloadAction<{keyname:string,value:string,id:string}> ) => {
+            const index = state.accesorios.findIndex(accesorio=>accesorio.idAccesorio===id)
             if(index < 0) return state
-            state.accesorios[index]=payload
+            state.accesorios[index][keyname]=value
         },
         deleteAccesorios: ( state:bien, {payload}:PayloadAction<string> ) => {
             const index = state.accesorios.findIndex(accesorio=>accesorio.idAccesorio===payload)
