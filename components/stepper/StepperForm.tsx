@@ -11,6 +11,8 @@ import { DatosPlan } from '../forms/formDescripcionPlan/DatosPlan';
 import { DatosBien } from '../forms/formDescripcionBien/DatosBien';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/index';
+import {PDFViewer} from '@react-pdf/renderer'
+import { DocuPdf } from '../vpdf/DocuPDF';
 
 
 
@@ -120,13 +122,20 @@ export const StepperForm = () => {
       <div>
         {allStepsCompleted() ? (
           <React.Fragment>
+
+            <Container>
+              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, pb:2}}>
+                <Box sx={{ flex: '1 1 auto' }} />
+                <Button onClick={handleReset} variant='contained' color='success'>Hacer nueva cotización</Button>
+              </Box>
+            </Container>
+            <PDFViewer style={{width:"100%", height:"90vh"}}>
+              <DocuPdf/>
+            </PDFViewer> 
+
             <Typography sx={{ mt: 2, mb: 1 }}>
               All steps completed - you&apos;re finished
             </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-              <Box sx={{ flex: '1 1 auto' }} />
-              <Button onClick={handleReset}>Reset</Button>
-            </Box>
           </React.Fragment>
         ) : (
           <React.Fragment>
@@ -144,8 +153,7 @@ export const StepperForm = () => {
               </Typography> */}
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                 <Box sx={{ flex: '1 1 auto' }} />
-                {
-                  activeStep>0?
+                {activeStep>0?
                   <Button
                     color="inherit"
                     variant='contained'
@@ -155,12 +163,21 @@ export const StepperForm = () => {
                   >
                     Atrás
                   </Button>
-                   : ''
+                   : ''}
+                {activeStep !== steps.length-1 ?
+                    <Button onClick={handleNext} variant='contained' color='success' sx={{ mr: 1 }}>
+                      Siguiente
+                    </Button>
+                    :''}
+
+                {
+                  activeStep !== steps.length && completed[activeStep] ? '': 
+                  completedSteps() === totalSteps()-1?
+                  <Button onClick={handleComplete} variant='contained' color='success'>Cotizar</Button>:
+                  <Button onClick={handleComplete} variant='contained'>Completar</Button>
                 }
-                <Button onClick={handleNext} variant='contained' color='success' sx={{ mr: 1 }}>
-                  Siguiente
-                </Button>
-                {activeStep !== steps.length &&
+
+                {/* {activeStep !== steps.length &&
                   (completed[activeStep] ? (
                     <Typography variant="caption" sx={{ display: 'inline-block' }}>
                       Step {activeStep + 1} already completed
@@ -171,7 +188,7 @@ export const StepperForm = () => {
                         ? 'Cotizar'
                         : 'Complete'}
                     </Button>
-                  ))}
+                  ))} */}
               </Box>
             </Container>
           </React.Fragment>
