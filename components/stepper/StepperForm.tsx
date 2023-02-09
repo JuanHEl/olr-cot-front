@@ -129,9 +129,11 @@ export const StepperForm = () => {
                 <Button onClick={handleReset} variant='contained' color='success'>Hacer nueva cotización</Button>
               </Box>
             </Container>
-            <PDFViewer style={{width:"100%", height:"90vh"}}>
-              <DocuPdf/>
-            </PDFViewer> 
+            <Container>
+              <PDFViewer style={{width:"100%", height:"90vh"}}>
+                <DocuPdf/>
+              </PDFViewer> 
+            </Container>
 
             <Typography sx={{ mt: 2, mb: 1 }}>
               All steps completed - you&apos;re finished
