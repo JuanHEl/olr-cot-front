@@ -1,9 +1,10 @@
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { Container, Grid, TextField, Button, Box, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { Container, Grid, TextField, Button, Box, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material';
+import { setCookie } from 'cookies-next';
 
 export const DatosLogin = () => {
 
@@ -46,13 +47,17 @@ export const DatosLogin = () => {
                 password:passwordState.value
             })
             if(response.status === 201){
-                alert('Estás dentro')
+                if(response.data){
+                    const { token } = response.data
+                    setCookie('TOKEN',token)
+                }
                 return router.push('/cotizador')
             }
-            alert('No se pudo registrar')
+            alert('No se pudo acceder')
         } catch (error) {
-            console.log(error)
-            alert(error)
+            if(error.response){
+                alert(error.response.data.msg)
+            }
         }
     }
 

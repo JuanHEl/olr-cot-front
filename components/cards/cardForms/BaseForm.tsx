@@ -1,14 +1,16 @@
 import React from 'react'
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import styles from './BaseForm.module.css'
 import { Container } from '@mui/system';
 import Image from 'next/image';
 import { DatosCliente } from '../../forms/formDatosCliente';
 import { StepperForm } from '../../stepper';
+import { ButtonLogout } from '../../buttons';
 
 export const BaseForm = () => {
   return (
     <Box>
+        <ButtonLogout/>
         <Box className={styles.background} sx={{ backgroundImage: "url(/semi-circulo.png)" }}>
             <Box className={styles.img} sx={{ backgroundImage: "url(/OLR_leasing_con_R.png)" }}>
             </Box>
