@@ -22,11 +22,11 @@ export default function cotizadorHome(){
   
   // Verifica si es un usuario verificado con un token
   useEffect(()=>{
-    if(!token) router.push('/login')
+    // if(!token) router.push('/login')
     setTimeout(() => {
       setLoading(false)
     }, 600)
-  })
+  },[])
 
   
   // const hacerestado = () =>{

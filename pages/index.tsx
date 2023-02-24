@@ -4,6 +4,7 @@ import React, { FormEvent, useEffect, useState } from 'react'
 // import { useForm, SubmitHandler } from "react-hook-form";
 // import { yupResolver } from '@hookform/resolvers/yup';
 // import * as yup from "yup";
+import { useRouter } from 'next/router';
 
 // type InputsForm = {
 //   valorResidual: string,
@@ -32,6 +33,8 @@ import React, { FormEvent, useEffect, useState } from 'react'
 
 
 export default function Home() {
+
+  const router=useRouter()
 
   const [valorFactura, setValorFactura] = useState({ value: "", touched: false })
   const [valorAccesorios, setValorAccesorios] = useState({ value: "", touched: false })
@@ -147,8 +150,9 @@ export default function Home() {
   // };
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault() 
+    router.push('/login')
     // console.log({ valorFactura, valorAccesorios, valorRentas, valorFondoReservaMensual, valorComisionApertura, valorSeguroAnualC, valorOtrosGastos, valorFondoReserva, valorResidual })
-    cotiza()
+    // cotiza()
   }
 
   return (
@@ -434,7 +438,6 @@ export default function Home() {
 
       {/* <input type="submit" />
     </form> */}
-
     </Container>
   )
 }

@@ -38,15 +38,14 @@ export const DatosLogin = () => {
         try {
             const response = await axios.post<{ 
                 nombre:string,
-                email:string,
-                telefono:string,
                 tipo_cliente:string,
                 token:string
-             }>('http://localhost:8006/api/cliente/login', {
+             }>('http://localhost:8006/api/administrador/login', {
                 email:emailState.value,
                 password:passwordState.value
             })
-            if(response.status === 201){
+            console.log(response)
+            if(response.status === 200){
                 if(response.data){
                     const { token } = response.data
                     setCookie('TOKEN',token)

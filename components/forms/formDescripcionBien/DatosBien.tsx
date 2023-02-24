@@ -109,8 +109,13 @@ export const DatosBien = () => {
     // Constantes y funciones de CANTIDAD DE UNIDADES
     const [cantidadUnidadesState, setCantidadUnidadesState] = useState({ value: 0, touched: false })
     const handleChangeCantidadUnidadesState = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setCantidadUnidadesState(currentValue => ({ ...currentValue, value: Number(event.target.value) }));
-        dispatch(setCantidadUnidades(Number(event.target.value)))
+        const input = event.target.value;
+        // Solo permitir números y decimales
+        const regex = /^\d*\.?\d*$/;
+        if (regex.test(input)) {
+            setCantidadUnidadesState(currentValue => ({ ...currentValue, value: Number(input) }));
+            dispatch(setCantidadUnidades(Number(input)))
+        }
     };
 
     // Constantes y funciones de MARCAS
@@ -162,7 +167,7 @@ export const DatosBien = () => {
     }
 
     const click = (accesorio: { nombre: string, descripcion: string, valor: number }) => {
-        const claveUnica = uuid().slice(0,8)
+        const claveUnica = uuid().slice(0, 8)
         // const small_id = claveUnica.slice(0,8)
         // console.log(claveUnica)
 
@@ -186,7 +191,7 @@ export const DatosBien = () => {
         const value = e.target.value
         // console.log('keyname: ',keyname)
         // console.log('value: ',value)
-        dispatch(updateAccesorios({keyname,value,id}))
+        dispatch(updateAccesorios({ keyname, value, id }))
         // let auxAccesorios = [...accesorios]
         // // console.log('AuxAccesoriosState: ', auxAccesorios)
         // const index = auxAccesorios.findIndex((accesorio) => accesorio.idAccesorio === id)
@@ -229,9 +234,14 @@ export const DatosBien = () => {
                             id="cantidadUnidades"
                             name="cantidadUnidades"
                             label="Cantidad de unidades"
-                            type='number'
+                            type='text'
                             fullWidth
                             value={cantidadUnidades}
+                            InputProps={{
+                                inputProps: {
+                                    min: 0
+                                }
+                            }}
                         // variant="outlined"
                         // onBlur={()=>setValorOtrosGastos(currentValue => ({ ...currentValue, touched: true }))}
                         // color={valorOtrosGastos.value==''? 'warning' : 'info'}
@@ -340,7 +350,7 @@ export const DatosBien = () => {
                         {accesorios && accesorios.length > 0 && accesorios.map(({ idAccesorio, descripcionAccesorio, nombreAccesorio, valorAccesorio }, index) => {
                             return (
                                 <Grid container width='95%' alignContent='end' spacing={1} border={1} borderColor='primary' borderRadius={2} key={index} p={1} m={1}>
-                                    <Typography> El id:{ idAccesorio } </Typography>
+                                    <Typography> El id:{idAccesorio} </Typography>
 
                                     <Typography>Accesorio #{index + 1}</Typography>
                                     <Grid item xs={12} sx={{ textAlign: 'center' }}>

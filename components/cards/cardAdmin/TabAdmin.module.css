@@ -1,0 +1,151 @@
+@media only screen and (min-width: 1201px) {
+    .img {
+        padding: 50px;
+        height: 500px;
+        position: relative;
+        background-repeat: no-repeat;
+        background-position: 50% 10%;
+        background-size: 25% 40%
+    }
+
+    .card {
+        top: calc(-250px);
+        width: calc(100%);
+        background: #FFF;
+        position: relative;
+        border-radius: 20px;
+        box-shadow: 0 0 .8em #000000;
+    }
+
+    .cardHijo {
+        margin: auto;
+        padding: 30px 0;
+        width: 100%;
+        position: relative;
+    }
+
+    .background {
+        margin-top: 5%;
+        width: center calc(80%);
+        padding-top: 50px;
+        text-align: center;
+        position: relative;
+        background-repeat: no-repeat;
+        background-position: center top;
+        background-size: contain;
+    }
+}
+
+
+@media only screen and ((min-width: 768px) and (max-width:1200px)) {
+    .img {
+        padding: 50px;
+        height: 450px;
+        position: relative;
+        background-repeat: no-repeat;
+        background-position: 50% 10%;
+        background-size: 20% 35%;
+    }
+
+    .card {
+        top: calc(-250px);
+        width: calc(100%);
+        background: #FFF;
+        position: relative;
+        border-radius: 20px;
+        box-shadow: 0 0 .8em #000000;
+    }
+
+    .cardHijo {
+        margin: auto;
+        padding: 30px 0;
+        width: 100%;
+        position: relative;
+    }
+
+    .background {
+        margin-top: 5%;
+        padding-top: 30px;
+        text-align: center;
+        position: relative;
+        background-repeat: no-repeat;
+        background-position: center top;
+        background-size: contain;
+    }
+}
+
+
+@media only screen and ((min-width: 481px) and (max-width:768px)) {
+    .img {
+        padding: 50px;
+        height: 400px;
+        position: relative;
+        background-repeat: no-repeat;
+        background-position: 50% 10%;
+        background-size: 20% 25%
+    }
+
+    .card {
+        top: calc(-250px);
+        width: calc(100%);
+        background: #FFF;
+        position: relative;
+        border-radius: 20px;
+        box-shadow: 0 0 .8em #000000;
+    }
+
+    .cardHijo {
+        margin: auto;
+        padding: 30px 0;
+        width: 100%;
+        position: relative;
+    }
+
+    .background {
+        margin-top: 5%;
+        padding-top: 30px;
+        text-align: center;
+        position: relative;
+        background-repeat: no-repeat;
+        background-position: center top;
+        background-size: contain;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .card {
+        top: calc(-450px);
+        margin: calc(10%) 0;
+        width: calc(100%);
+        background: #FFF;
+        position: relative;
+        border-radius: 20px;
+        box-shadow: 0 0 .8em #000000;
+    }
+
+    .cardHijo {
+        margin: auto;
+        padding: 30px 0;
+        width: 100%;
+        position: relative;
+    }
+
+    .background {
+        margin-top: 5%;
+        height: 500px;
+        background-position: center top;
+        background-repeat: no-repeat;
+        background-size: contain;
+        position: relative;
+    }
+
+    .img {
+        padding: 50px;
+        height: 100px;
+        width: center calc(80%);
+        position: relative;
+        background-repeat: no-repeat;
+        background-position: 50% 60%;
+        background-size: 25% 60%
+    }
+}
