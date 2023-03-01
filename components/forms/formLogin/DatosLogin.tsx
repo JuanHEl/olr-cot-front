@@ -1,15 +1,20 @@
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { authSlice } from '../../../store/slices/authSlice';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Container, Grid, TextField, Button, Box, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material';
 import { setCookie } from 'cookies-next';
+import { useDispatch } from 'react-redux';
+import { dataInfo } from '../../../interfaces/dataInterfaces';
 
 export const DatosLogin = () => {
 
     // 
     const router = useRouter()
+    const dispatch=useDispatch()
+    const {loggin} = authSlice.actions
     
     // Constantes y funciones de EMAIL
     const [emailState, setEmailState] = useState({ value: "", touched: false })
@@ -36,23 +41,19 @@ export const DatosLogin = () => {
     const onSubmitHandler = async( event: FormEvent )=>{
         event.preventDefault()
         try {
-            const response = await axios.post<{ 
-                nombre:string,
-                tipo_cliente:string,
-                token:string
-             }>('http://localhost:8006/api/administrador/login', {
+            const response = await axios.post<dataInfo>('http://localhost:8006/api/administrador/login', {
                 email:emailState.value,
                 password:passwordState.value
             })
+            const resp = response.data
             console.log(response)
             if(response.status === 200){
                 if(response.data){
                     const { token } = response.data
                     setCookie('TOKEN',token)
                 }
-                return router.push('/cotizador')
+                dispatch(loggin(resp))
             }
-            alert('No se pudo acceder')
         } catch (error) {
             if(error.response){
                 alert(error.response.data.msg)

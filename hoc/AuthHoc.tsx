@@ -17,17 +17,21 @@ export const AuthHoc: FC<Props> = ({ children }) => {
 
     useEffect(() => {
         const token_ = getCookie('TOKEN')
-        if (!token) return
+        if (!token_) return
         dispatch(getAuth())
     }, [])
 
     useEffect(() => {
-        console.log({ pathname, isLogged })
+        console.log({ pathname, isLogged, authorization })
         if (pathname != '/' && pathname != '/login' && !isLogged) {
-            router.replace('/')
+            router.replace('/login')
         }
-        if ((pathname == '/login' || pathname == '/') && isLogged) {
+        if ((pathname == '/login' || pathname == '/' || pathname=='administrador') && isLogged && authorization==='Promotor') {
             router.push('/cotizador')
+            // authorization === 'Administrador' ? router.replace('/administrador') : authorization === 'Promotor' ? router.replace('/cotizador') : authorization === 'Super_Administrador' && router.replace('/test')
+        }
+        if ((pathname == '/login' || pathname == '/' || pathname=='cotizador') && isLogged && authorization==='Administrador') {
+            router.push('/administrador')
             // authorization === 'Administrador' ? router.replace('/administrador') : authorization === 'Promotor' ? router.replace('/cotizador') : authorization === 'Super_Administrador' && router.replace('/test')
         }
     }, [
