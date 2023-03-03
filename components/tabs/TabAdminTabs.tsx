@@ -3,7 +3,7 @@ import { Tabs, Tab } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Container } from '@mui/system';
-import { UsuariosTables, TipoActivoTable } from '../tables';
+import { UsuariosTables, TipoActivoTable, ModeloTable, MarcaTable } from '../tables';
 
 
 const tabsOptions = ["Usuario", "Tipo activo", "Modelo", "Marca", "Estado", "Tabla residual", "Otros gastos", "Editables", "Tasas"];
@@ -87,10 +87,12 @@ export const TabAdminTabs = () => {
                             index === 2 ?
                                 <Box key={index} m={1}>
                                     <Typography> {label} </Typography>
+                                    <ModeloTable/>
                                 </Box> :
                                 index === 3 ?
                                     <Box key={index} m={1}>
                                         <Typography> {label} </Typography>
+                                        <MarcaTable/>
                                     </Box> :
                                     index === 4 ?
                                         <Box key={index} m={1}>

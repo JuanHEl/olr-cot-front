@@ -4,7 +4,7 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { axiosInstances } from '../../instances/axiosInstances';
 import { getCookie } from 'cookies-next';
 import Box from '@mui/material/Box';
-import { IconButton, Checkbox } from '@mui/material';
+import { IconButton, Checkbox, CircularProgress } from '@mui/material';
 import { Lock } from '@mui/icons-material';
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions';
@@ -12,6 +12,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
+import Backdrop from '@mui/material/Backdrop';
 import {
     Table,
     TableBody,
@@ -24,6 +25,7 @@ import {
     Popover,
 } from '@mui/material';
 
+// Los estilos de las celdas de la tabla
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: '#121858',
@@ -34,6 +36,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
 }));
 
+// El estilo de las columnas de la tabla
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: theme.palette.action.hover,
@@ -43,15 +46,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-
+// El estilo del popover que se activa cuando no se tiene seleccionado un administrador para eliminar
 const StyledPopover = styled(Popover)(({ theme }) => ({
     '& .MuiPopover-paper': {
-      padding: theme.spacing(2),
-      backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(2),
+        backgroundColor: theme.palette.background.paper,
     },
-  }));
-  
+}));
 
+// El tipo de Usuario/Administrador -> De hecho si es un administrador, pero por convención se queda como user
 type User = {
     id: number;
     nombre: string;
@@ -60,11 +63,14 @@ type User = {
 };
 
 export const UsuariosTables = () => {
-    const [users, setUsers] = useState<User[]>([]);
-    const [editedUser, setEditedUser] = useState<User | null>(null);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+    // Se declaran los state que se utilizaran para diferentes funciones
+    const [users, setUsers] = useState<User[]>([]);  // Recibe los usuarios de la base de datos
+    const [editedUser, setEditedUser] = useState<User | null>(null); // Guarda el usuario editarlo para mandarlo a la base de datos
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // Estado que guarda si se activa el popover de editar
+    const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null); // Estado que guarda si se activa el popover de cancelar
+    const [selectedUserId, setSelectedUserId] = useState<number | null>(null); // Guarda si existe un id de un usuario/administrador que eliminar
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false); // Bandera para verificar si se activa el dialog de eliminar
 
     const handleEditUser = (user: User) => {
         setEditedUser(user);
@@ -90,14 +96,12 @@ export const UsuariosTables = () => {
     const handleSaveUser = async () => {
         const token = getCookie('TOKEN');
         if (editedUser) {
-            // console.log('El usuario editado es: ', editedUser);
-            // console.log('El token de seguridad es: ', token);
             try {
                 const response = await axiosInstances.put('administrador/', editedUser, {
                     headers: { 'token': token },
                 });
                 if (response.status === 201) {
-                    const data = response.data;
+                    // const data = response.data;
                     setUsers(users.map((user) => (user.id === editedUser.id ? editedUser : user)));
                     setEditedUser(null);
                     setAnchorEl(null);
@@ -110,88 +114,103 @@ export const UsuariosTables = () => {
 
     const handleDeleteUser = async (event: React.MouseEvent<HTMLElement>) => {
         if (!selectedUserId) {
-            setAnchorEl1(event.currentTarget);
-            return console.log('No existe ningun elemento a eliminar')
+            // console.log('No existe ningun elemento a eliminar')
+            return setAnchorEl1(event.currentTarget);
         }
-        // console.log('El usuario editado es: ', editedUser);
-        // console.log('El token de seguridad es: ', token);
-        console.log('El siguiente id será eliminado: ', selectedUserId)
-
+        // console.log('El siguiente id será eliminado: ', selectedUserId)
         setShowDeleteDialog(true)
-        // const response = await axiosInstances.put('administrador/', editedUser, {
-        //     headers: { 'token': token },
-        // });
-        // if (response.status === 201) {
-        //     const data = response.data;
-        //     setUsers(users.map((user) => (user.id === editedUser.id ? editedUser : user)));
-        //     setEditedUser(null);
-        //     setAnchorEl(null);
-        // }
     }
 
     const handleConfirmDelete = async () => {
         const token = getCookie('TOKEN');
-        console.log('Hello')
         try {
-            const response = await axiosInstances.put('administrador/delete_admin', {id_eliminar:selectedUserId} ,{
+            const response = await axiosInstances.put('administrador/delete_admin', { id_eliminar: selectedUserId }, {
                 headers: { 'token': token },
             });
             if (response.status === 201) {
                 setShowDeleteDialog(false);
+                fetchUsers();
             }
         } catch (error) {
             console.log(error);
         }
-        // if (deletingUser) {
-        //     console.log('El usuario a borrar es: ', deletingUser);
-        //     console.log('El token de seguridad es: ', token);
-        //     try {
-        //         const response = await axiosInstances.delete(`administrador/${deletingUser.id}`, {
-        //             headers: { 'token': token },
-        //         });
-        //         if (response.status === 200) {
-        //             setUsers(users.filter((user) => user.id !== deletingUser.id));
-        //             setDeletingUser(null);
-        //             setShowDeleteDialog(false);
-        //         }
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // }
     };
 
     const handleUserSelect = (id: number) => {
         setSelectedUserId(id === selectedUserId ? null : id);
     };
 
-    
-  const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null);
-  const handleClose = () => {
-    setAnchorEl1(null);
-  };
+    const handleClose = () => {
+        setAnchorEl1(null);
+    };
 
-  const open = Boolean(anchorEl1);
-  const id = open ? 'simple-popover' : undefined;
+    const open = Boolean(anchorEl1);
+    const id = open ? 'simple-popover' : undefined;
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const token = getCookie('TOKEN');
-                const response = await axiosInstances.get('administrador/show_all_admins', {
-                    headers: { 'TOKEN': token }
-                });
-                if (response.status === 200) {
-                    const data = response.data;
-                    // console.log('La data es:', data);
-                    // console.log('El tipo de administradores desde la base son, ', data.data);
-                    // console.log({ data: data.data });
-                    // console.log('Los administradores son: ', data.data);
-                    setUsers(data.data);
+
+
+    const [openNewUser, setOpenNewUser] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [nombreNewUser, setNombreNewUser] = useState('');
+    const [emailNewUser, setEmailNewUser] = useState('');
+    const [passwordNewUser, setPasswordNewUser] = useState('');
+    const [tipoNewUser, setTipoNewUser] = useState('');
+
+    const handleCloseNewUser = () => {
+        setOpenNewUser(false);
+    };
+
+    const handleToggleNewUser = () => {
+        setOpenNewUser(!openNewUser);
+    };
+
+    const handleSubmitNewUser = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setSubmitting(true);
+        try {
+            const token = 'your_auth_token_here';
+            const response = await axiosInstances.post(
+                'http://localhost:8006/api/administrador/',
+                {
+                    nombre: nombreNewUser,
+                    email: emailNewUser,
+                    password: passwordNewUser,
+                    tipo_administrador: tipoNewUser,
+                },
+                {
+                    headers: { 'TOKEN': token },
                 }
-            } catch (error) {
-                console.log(error);
+            );
+            console.log(response.data);
+            setOpenNewUser(false);
+            setNombreNewUser('');
+            setEmailNewUser('');
+            setPasswordNewUser('');
+            setTipoNewUser('');
+            setSubmitting(false);
+            fetchUsers();
+        } catch (error) {
+            console.error(error);
+            setSubmitting(false);
+        }
+    };
+
+
+    const fetchUsers = async () => {
+        try {
+            const token = getCookie('TOKEN');
+            const response = await axiosInstances.get('administrador/show_all_admins', {
+                headers: { 'TOKEN': token }
+            });
+            if (response.status === 200) {
+                const data = response.data;
+                setUsers(data.data);
             }
-        };
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
         fetchUsers();
     }, []);
     return (
@@ -201,9 +220,9 @@ export const UsuariosTables = () => {
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>ID</StyledTableCell>
-                            <StyledTableCell align="right">Nombre</StyledTableCell>
-                            <StyledTableCell align="right">Email</StyledTableCell>
-                            <StyledTableCell align="right">Tipo de administrador</StyledTableCell>
+                            <StyledTableCell align="center">Nombre</StyledTableCell>
+                            <StyledTableCell align="center">Email</StyledTableCell>
+                            <StyledTableCell align="center">Tipo de administrador</StyledTableCell>
                             <StyledTableCell align="center">Editar</StyledTableCell>
                         </TableRow>
                     </TableHead>
@@ -217,12 +236,13 @@ export const UsuariosTables = () => {
                                         onChange={() => handleUserSelect(user.id)}
                                     />
                                 </StyledTableCell>
-                                <StyledTableCell align="right">{user.nombre}</StyledTableCell>
-                                <StyledTableCell align="right">{user.email}</StyledTableCell>
-                                <StyledTableCell align="right">{user.tipo_administrador}</StyledTableCell>
+                                <StyledTableCell align="center">{user.nombre}</StyledTableCell>
+                                <StyledTableCell align="center">{user.email}</StyledTableCell>
+                                <StyledTableCell align="center">{user.tipo_administrador}</StyledTableCell>
                                 <StyledTableCell align="center">
                                     <Button
                                         variant="contained"
+                                        color='info'
                                         id={`edit-${user.id}`}
                                         onClick={() => handleEditUser(user)}
                                     >
@@ -267,7 +287,7 @@ export const UsuariosTables = () => {
                                             onChange={handleInputChange}
                                         />
                                         <Button
-                                            sx={{ m: 2 }} variant="contained" onClick={handleSaveUser}>
+                                            sx={{ m: 2, alignContent: 'end' }} variant="contained" onClick={handleSaveUser}>
                                             Guardar
                                         </Button>
                                     </Popover>
@@ -277,29 +297,106 @@ export const UsuariosTables = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Box textAlign='right' m={2}>
+            <Box m={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Button
+                    onClick={handleToggleNewUser}
+                    variant='outlined'
+                    color='primary'
+                >Añadir</Button>
+
+                <Backdrop
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={openNewUser}
+                >
+                    <Box
+                        textAlign='center'
+                        p={2}
+                        sx={{
+                            m: 2,
+                            backgroundColor: 'Menu',
+                            borderRadius: '10px',
+                            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.25)'
+                        }}
+                    >
+                        <Typography color='black'>Agregar usuario</Typography>
+                        <Box component='form' onSubmit={handleSubmitNewUser} m={2} p={2}>
+                            <TextField
+                                sx={{ mb: 2 }}
+                                label='Nombre'
+                                value={nombreNewUser}
+                                onChange={(e) => setNombreNewUser(e.target.value)}
+                                fullWidth
+                                required
+                            />
+                            <TextField
+                                sx={{ mb: 2 }}
+                                label='Email'
+                                type='email'
+                                value={emailNewUser}
+                                onChange={(e) => setEmailNewUser(e.target.value)}
+                                fullWidth
+                                required
+                            />
+                            <TextField
+                                sx={{ mb: 2 }}
+                                label='Contraseña'
+                                type='password'
+                                value={passwordNewUser}
+                                onChange={(e) => setPasswordNewUser(e.target.value)}
+                                fullWidth
+                                required
+                            />
+                            <TextField
+                                sx={{ mb: 2 }}
+                                label='Tipo'
+                                value={tipoNewUser}
+                                onChange={(e) => setTipoNewUser(e.target.value)}
+                                fullWidth
+                                required
+                            />
+                            <Box mt={2} display='flex' justifyContent='flex-end'>
+                                <Button onClick={handleCloseNewUser} disabled={submitting}>
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    type='submit'
+                                    variant='contained'
+                                    color='primary'
+                                    disabled={submitting}
+                                >
+
+                                    {submitting ? (
+                                        <CircularProgress size={24} />
+                                    ) : (
+                                        'Guardar'
+                                    )}
+                                </Button>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Backdrop>
                 <Button
                     onClick={handleDeleteUser}
-                    variant='contained'
+                    variant='outlined'
                     color='error'
                 >Eliminar</Button>
                 <StyledPopover
-                  id={id}
-                  open={open}
-                  anchorEl={anchorEl1}
-                  onClose={handleClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                  }}
+                    id={id}
+                    open={open}
+                    anchorEl={anchorEl1}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
                 >
-                  <Box>
-                    <Typography>Selecciona el elemento que deseas eliminar</Typography>
-                  </Box>
+                    <Box>
+                        <Typography>Selecciona el elemento que se desea eliminar</Typography>
+                    </Box>
                 </StyledPopover>
             </Box>
             <Dialog
