@@ -2,37 +2,9 @@ import React from 'react'
 import { Tabs, Tab } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { Container } from '@mui/system';
 import { UsuariosTables, TipoActivoTable, ModeloTable, MarcaTable } from '../tables';
 
-
 const tabsOptions = ["Usuario", "Tipo activo", "Modelo", "Marca", "Estado", "Tabla residual", "Otros gastos", "Editables", "Tasas"];
-
-// interface TabPanelProps {
-//     children?: React.ReactNode;
-//     index: number;
-//     value: number;
-// }
-
-// function TabPanel(props: TabPanelProps) {
-//     const { children, value, index, ...other } = props;
-
-//     return (
-//         <div
-//             role="tabpanel"
-//             hidden={value !== index}
-//             id={`vertical-tabpanel-${index}`}
-//             aria-labelledby={`vertical-tab-${index}`}
-//             {...other}
-//         >
-//             {value === index && (
-//                 <Box sx={{ p: 3 }}>
-//                     {children}
-//                 </Box>
-//             )}
-//         </div>
-//     );
-// }
 
 const a11yProps = (index: number) => {
     return {
@@ -72,80 +44,52 @@ export const TabAdminTabs = () => {
                 <Tab label="Tasas" {...a11yProps(8)} />
             </Tabs>
             <Box width='calc(100%)' justifyContent='center' display='block'>
-            {tabsOptions.map((label, index) => (
-                value === index ?
-                    index === 0 ?
-                        <Box key={index} m={1}>
-                            <Typography> {label} </Typography>
-                            <UsuariosTables />
-                        </Box> :
-                        index === 1 ?
+                {tabsOptions.map((label, index) => (
+                    value === index ?
+                        index === 0 ?
                             <Box key={index} m={1}>
                                 <Typography> {label} </Typography>
-                                <TipoActivoTable/>
+                                <UsuariosTables />
                             </Box> :
-                            index === 2 ?
+                            index === 1 ?
                                 <Box key={index} m={1}>
                                     <Typography> {label} </Typography>
-                                    <ModeloTable/>
+                                    <TipoActivoTable />
                                 </Box> :
-                                index === 3 ?
+                                index === 2 ?
                                     <Box key={index} m={1}>
                                         <Typography> {label} </Typography>
-                                        <MarcaTable/>
+                                        <ModeloTable />
                                     </Box> :
-                                    index === 4 ?
+                                    index === 3 ?
                                         <Box key={index} m={1}>
                                             <Typography> {label} </Typography>
+                                            <MarcaTable />
                                         </Box> :
-                                        index === 5 ?
+                                        index === 4 ?
                                             <Box key={index} m={1}>
                                                 <Typography> {label} </Typography>
                                             </Box> :
-                                            index === 6 ?
+                                            index === 5 ?
                                                 <Box key={index} m={1}>
                                                     <Typography> {label} </Typography>
                                                 </Box> :
-                                                index === 7 ?
+                                                index === 6 ?
                                                     <Box key={index} m={1}>
                                                         <Typography> {label} </Typography>
                                                     </Box> :
-                                                    index === 8 ?
+                                                    index === 7 ?
                                                         <Box key={index} m={1}>
                                                             <Typography> {label} </Typography>
-                                                        </Box> : ''
-                    :
-                    ''
-            ))}
-
+                                                        </Box> :
+                                                        index === 8 ?
+                                                            <Box key={index} m={1}>
+                                                                <Typography> {label} </Typography>
+                                                            </Box> : ''
+                        :
+                        ''
+                ))}
             </Box>
-            {/* <TabPanel value={value} index={0}>
-                Item One
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                Item Two
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                Item Three
-            </TabPanel>
-            <TabPanel value={value} index={3}>
-                Item Four
-            </TabPanel>
-            <TabPanel value={value} index={4}>
-                Item Five
-            </TabPanel>
-            <TabPanel value={value} index={5}>
-                Item Six
-            </TabPanel>
-            <TabPanel value={value} index={6}>
-                Item Seven
-            </TabPanel>
-            <TabPanel value={value} index={7}>
-                Item Eight
-            </TabPanel>
-            <TabPanel value={value} index={8}>
-                Item Nine
-            </TabPanel> */}
         </Box>
     )
 }

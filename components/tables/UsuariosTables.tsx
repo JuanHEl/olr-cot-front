@@ -13,6 +13,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Backdrop from '@mui/material/Backdrop';
+// import CustomizedAlert from '../common/Alert';
 import {
     Table,
     TableBody,
@@ -63,6 +64,20 @@ type User = {
 };
 
 export const UsuariosTables = () => {
+
+    // Se mandará a llamar la alerta personalizada y así es como se pintará
+    // const [openAlert, setOpenAlert] = useState(false);
+    // const [alertSeverity, setAlertSeverity] = useState<'error' | 'warning' | 'info' | 'success'>('success');
+    // const [alertMessage, setAlertMessage] = useState('');
+    // const handleShowAlert = (severity: 'error' | 'warning' | 'info' | 'success', message: string) => {
+    //     setAlertSeverity(severity);
+    //     setAlertMessage(message);
+    //     setOpenAlert(true);
+    // };
+
+    // const handleCloseAlert = () => {
+    //     setOpenAlert(false);
+    // };
 
     // Se declaran los state que se utilizaran para diferentes funciones
     const [users, setUsers] = useState<User[]>([]);  // Recibe los usuarios de la base de datos
@@ -168,9 +183,9 @@ export const UsuariosTables = () => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const token = 'your_auth_token_here';
+            const token = getCookie('TOKEN');
             const response = await axiosInstances.post(
-                'http://localhost:8006/api/administrador/',
+                'administrador/',
                 {
                     nombre: nombreNewUser,
                     email: emailNewUser,
@@ -181,7 +196,7 @@ export const UsuariosTables = () => {
                     headers: { 'TOKEN': token },
                 }
             );
-            console.log(response.data);
+            // console.log(response.data);
             setOpenNewUser(false);
             setNombreNewUser('');
             setEmailNewUser('');
@@ -195,6 +210,51 @@ export const UsuariosTables = () => {
         }
     };
 
+
+    const [editedUserId, setEditedUserId] = useState<number | null>(null); // Guarda si existe un id de un usuario/administrador que eliminar
+    const [anchorElReplacePass, setAnchorElReplacePass] = useState<HTMLElement | null>(null) // Estado que guarda si se activa el popover de editar
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const handleOpenPopover = (id: number) => {
+        // console.log({ id, })
+        setEditedUserId(id);
+        setAnchorElReplacePass(document.getElementById(`edit-${id}`));
+    };
+
+    const handleCloseReplacePass = () => {
+        setAnchorElReplacePass(null);
+    };
+
+    const handleConfirm = async () => {
+        if (newPassword === confirmPassword && editedUserId) {
+            try {
+                const token = getCookie('TOKEN');
+                const response = await axiosInstances.put(
+                    'administrador/replace_password',
+                    {
+                        id_editPassword: editedUserId,
+                        newPassword: newPassword
+                    },
+                    {
+                        headers: { 'TOKEN': token },
+                    }
+                );
+                if (response.status === 201) {
+                    setNewPassword('');
+                    setConfirmPassword('');
+                    fetchUsers();
+                    // handleShowAlert('success', '¡Se ha actualizado la contraseña con éxito!')
+                }
+            } catch (error) {
+                console.log(error);
+            }
+            handleCloseReplacePass();
+        } else {
+            alert('Las contraseñas no coinciden');
+        }
+    };
+
+    const openReplacePassword = Boolean(anchorElReplacePass);
 
     const fetchUsers = async () => {
         try {
@@ -248,9 +308,43 @@ export const UsuariosTables = () => {
                                     >
                                         Editar
                                     </Button>
-                                    <IconButton>
+
+                                    <IconButton onClick={() => handleOpenPopover(user.id)}>
                                         <Lock />
                                     </IconButton>
+
+                                    <Popover
+                                        sx={{ m: 1 }}
+                                        open={openReplacePassword}
+                                        anchorEl={anchorElReplacePass}
+                                        onClose={handleCloseReplacePass}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }}
+                                    >
+                                        <TextField
+                                            sx={{ m: 2 }}
+                                            label="Nueva Contraseña"
+                                            type="password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                        />
+                                        <TextField
+                                            sx={{ m: 2 }}
+                                            label="Confirmar Contraseña"
+                                            type="password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                        />
+                                        <Button sx={{ m: 2, alignContent: 'end' }} variant="contained" onClick={handleConfirm}>Confirmar</Button>
+                                    </Popover>
+                                    {/* <CustomizedAlert open={openAlert} onClose={handleCloseAlert} severity={alertSeverity} message={alertMessage} /> */}
+
                                     <Popover
                                         sx={{ m: 2 }}
                                         open={anchorEl !== null && editedUser?.id === user.id}
