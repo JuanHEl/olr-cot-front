@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { axiosInstances } from '../../instances/axiosInstances';
 import { getCookie } from 'cookies-next';
-import Box from '@mui/material/Box';
-import { IconButton, Checkbox, CircularProgress } from '@mui/material';
 import { Lock } from '@mui/icons-material';
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Typography from '@mui/material/Typography';
-import Backdrop from '@mui/material/Backdrop';
 // import CustomizedAlert from '../common/Alert';
 import {
     Table,
@@ -24,6 +14,18 @@ import {
     TextField,
     Button,
     Popover,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Typography,
+    Backdrop,
+    IconButton,
+    Checkbox,
+    CircularProgress,
+    Box,
+    styled
 } from '@mui/material';
 
 // Los estilos de las celdas de la tabla
@@ -256,6 +258,10 @@ export const UsuariosTables = () => {
 
     const openReplacePassword = Boolean(anchorElReplacePass);
 
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
     const fetchUsers = async () => {
         try {
             const token = getCookie('TOKEN');
@@ -270,9 +276,7 @@ export const UsuariosTables = () => {
             console.log(error);
         }
     };
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+
     return (
         <Box>
             <TableContainer component={Paper}>
@@ -397,7 +401,6 @@ export const UsuariosTables = () => {
                     variant='outlined'
                     color='primary'
                 >Añadir</Button>
-
                 <Backdrop
                     sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                     open={openNewUser}

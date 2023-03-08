@@ -48,126 +48,57 @@ const StyledPopover = styled(Popover)(({ theme }) => ({
 }));
 
 // Se declaran de que tipo serán las variables
-interface TipoActivo {
+interface tasas {
   id: number;
-  tipo_activo: string;
+  plazo: number;
+  tasa_a: number;
+  tasa_b: number;
+  tasa_alfa: number;
+  tasa_beta: number;
+  tasa_gamma: number
 }
 
-export const TipoActivoTable = () => {
+export const Tasas = () => {
 
-  const [tipoActivos, setTipoActivos] = useState<TipoActivo[]>([]); // Guarda los tipos de Activo de la base de datos
-  const [selectedTipoActivoId, setSelectedTipoActivoId] = useState<number | null>(null); // Guarda el ID del tipo de activo seleccionado en la tabla
+  const [tasas, setTasas] = useState<tasas[]>([]); // Guarda los tipos de Activo de la base de datos
 
-  const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null); // Estado que guarda si se activa el popover de cancelar
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false); // Bandera para verificar si se activa el dialog de eliminar
-
-  const [editedTipoActivo, setEditedTipoActivo] = useState<TipoActivo | null>(null); // Guarda el tipo de activo editarlo para mandarlo a la base de datos
+  const [editedTasas, setEditedTasas] = useState<tasas | null>(null); // Guarda el tipo de activo editarlo para mandarlo a la base de datos
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // Estado que guarda si se activa el dialog de editar
 
-  const [openNewTipoActivo, setOpenNewTipoActivo] = useState(false); // Bandera que sirve para ver si se abre el componente para agregar un nuevo Tipo de Activo
-  const [submitting, setSubmitting] = useState(false); // Cierra el componente para agregar un nuevo tipo de activo
-  const [newTipoActivo, setNewTipoActivo] = useState(''); //Guarda los nuevos valores del tipo de activo
-
-  const handleClose = () => {
-    setAnchorEl1(null);
-  };
-
-  const handleDelete = async (event: React.MouseEvent<HTMLElement>) => {
-    if (!selectedTipoActivoId) {
-      // console.log('No existe ningun elemento a eliminar')
-      return setAnchorEl1(event.currentTarget);
-    }
-    // console.log('El siguiente id será eliminado: ', selectedUserId)
-    setShowDeleteDialog(true)
-  }
-  const handleConfirmDelete = async () => {
-    const token = getCookie('TOKEN');
-    try {
-      console.log('Aqui está el id que se eliminará: ', selectedTipoActivoId)
-      const response = await axiosInstances.put('tipo_activo/delete_tipo_activo', { id_eliminar: selectedTipoActivoId }, {
-        headers: { 'token': token },
-      });
-      console.log('aqui está el response:', response)
-      if (response.status === 201) {
-        setShowDeleteDialog(false);
-        fetchTipoActivos();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const open = Boolean(anchorEl1);
-  const id = open ? 'simple-popover' : undefined;
-
-  const handleCloseNewTipoActivo = () => {
-    setOpenNewTipoActivo(false);
-  };
-
-  const handleToggleNewTipoActivo = () => {
-    setOpenNewTipoActivo(!openNewTipoActivo);
-  };
-
-  const handleSubmitNewTipoActivo = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      const token = getCookie('TOKEN');
-      console.log('Tipo Activo: ', newTipoActivo)
-      const response = await axiosInstances.post('tipo_activo/',
-        {
-          tipo_activo: newTipoActivo,
-        },
-        {
-          headers: { 'TOKEN': token },
-        }
-      );
-      if (response.status === 201) {
-        // console.log(response.data);
-        setOpenNewTipoActivo(false);
-        setSubmitting(false);
-        fetchTipoActivos();
-      }
-    } catch (error) {
-      console.error(error);
-      setSubmitting(false);
-    }
-  };
-
-  const handleEditTipoActivo = (tipoActivo: TipoActivo) => {
-    setEditedTipoActivo(tipoActivo);
-    setAnchorEl(document.getElementById(`edit-${tipoActivo.id}`));
+  const handleEditTasas = (tasas: tasas) => {
+    setEditedTasas(tasas);
+    setAnchorEl(document.getElementById(`edit-${tasas.id}`));
   };
 
   const handleCancelEdit = () => {
-    setEditedTipoActivo(null);
+    setEditedTasas(null);
     setAnchorEl(null);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setEditedTipoActivo((prevTipoActivo) => {
-      if (prevTipoActivo) {
-        return { ...prevTipoActivo, [name]: value };
+    setEditedTasas((prevTasas) => {
+      if (prevTasas) {
+        return { ...prevTasas, [name]: value };
       } else {
         return null;
       }
     });
   };
 
-  const handleSaveTipoActivo = async () => {
+  const handleSaveTasas = async () => {
     const token = getCookie('TOKEN');
-    if (editedTipoActivo) {
+    if (editedTasas) {
       try {
-        const response = await axiosInstances.put('tipo_activo/', editedTipoActivo, {
+        const response = await axiosInstances.put('valores_tasas/', editedTasas, {
           headers: { 'token': token },
         });
         if (response.status === 200) {
           // const data = response.data;
-          setTipoActivos(tipoActivos.map((tipoA) => (tipoA.id === editedTipoActivo.id ? editedTipoActivo : tipoA)));
-          setEditedTipoActivo(null);
+          setTasas(tasas.map((tipoA) => (tipoA.id === editedTasas.id ? editedTasas : tipoA)));
+          setEditedTasas(null);
           setAnchorEl(null);
-          fetchTipoActivos();
+          fetchEstado();
         }
       } catch (error) {
         console.log(error);
@@ -175,33 +106,26 @@ export const TipoActivoTable = () => {
     }
   };
 
-  const fetchTipoActivos = async () => {
+  useEffect(() => {
+    fetchEstado();
+  }, []);
+
+  const fetchEstado = async () => {
     const token = getCookie('TOKEN');
+    const tipo_activo = 'Autos';
     try {
-      const response = await axiosInstances.get('tipo_activo/show_all_tipo_activo', {
+      const response = await axiosInstances.get(`valores_tasas/${tipo_activo}`, {
         headers: { 'TOKEN': token }
       });
-      console.log('El response es:', response)
+      // console.log('El response es:', response.data.data)
       if (response.status === 200) {
         const data = response.data;
-        setTipoActivos(data.data);
+        setTasas(data.data);
       }
     } catch (error) {
       console.log(error);
     }
   }
-
-  useEffect(() => {
-    fetchTipoActivos();
-  }, []);
-
-  const handleCheckboxChange = (id: number) => {
-    if (selectedTipoActivoId === id) {
-      setSelectedTipoActivoId(null);
-    } else {
-      setSelectedTipoActivoId(id);
-    }
-  };
 
   return (
     <>
@@ -210,35 +134,39 @@ export const TipoActivoTable = () => {
           <TableHead>
             <TableRow>
               <StyledTableCell align="center">ID</StyledTableCell>
-              <StyledTableCell align="center">Tipo de Activo</StyledTableCell>
+              <StyledTableCell align="center">Plazo</StyledTableCell>
+              <StyledTableCell align="center">Tasa A</StyledTableCell>
+              <StyledTableCell align="center">Tasa B</StyledTableCell>
+              <StyledTableCell align="center">Tasa Alfa</StyledTableCell>
+              <StyledTableCell align="center">Tasa Beta</StyledTableCell>
+              <StyledTableCell align="center">Tasa Gamma</StyledTableCell>
               <StyledTableCell align="center">Editar</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {tipoActivos.map((tipoActivo) => (
-              <StyledTableRow key={tipoActivo.id}>
-                <TableCell component="th" scope="row" align="center">
-                  <Checkbox
-                    checked={selectedTipoActivoId === tipoActivo.id}
-                    onChange={() => handleCheckboxChange(tipoActivo.id)}
-                  // disabled={selectedTipoActivoId !== null && selectedTipoActivoId !== tipoActivo.id}
-                  />
-                  {tipoActivo.id}
+            {tasas.map((tasa) => (
+              <StyledTableRow key={tasa.id}>
+                <TableCell component="th" scope="row" align="center">{tasa.id}
                 </TableCell>
-                <TableCell align="center">{tipoActivo.tipo_activo}</TableCell>
+                <TableCell align="center">{tasa.plazo} meses</TableCell>
+                <TableCell align="center">{tasa.tasa_a}</TableCell>
+                <TableCell align="center">{tasa.tasa_b}</TableCell>
+                <TableCell align="center">{tasa.tasa_alfa}</TableCell>
+                <TableCell align="center">{tasa.tasa_beta}</TableCell>
+                <TableCell align="center">{tasa.tasa_gamma}</TableCell>
                 <TableCell align="center">
                   <Button
                     variant="contained"
                     color='info'
-                    id={`edit-${tipoActivo.id}`}
-                    onClick={() => handleEditTipoActivo(tipoActivo)}
+                    id={`edit-${tasa.id}`}
+                    onClick={() => handleEditTasas(tasa)}
                   >
                     Editar
                   </Button>
 
                   <Backdrop
                     sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                    open={anchorEl !== null && editedTipoActivo?.id === tipoActivo.id}
+                    open={anchorEl !== null && editedTasas?.id === tasa.id}
                   >
                     <Box
                       textAlign='center'
@@ -250,11 +178,40 @@ export const TipoActivoTable = () => {
                         boxShadow: '0 2px 5px rgba(0, 0, 0, 0.25)'
                       }}
                     >
+                      <Typography color='black'>El plazo es de {tasa.plazo} meses</Typography>
                       <TextField
                         sx={{ m: 2 }}
-                        label="Tipo de Activo"
-                        name="tipo_activo"
-                        value={editedTipoActivo?.tipo_activo || ''}
+                        label="A"
+                        name="tasa_a"
+                        value={editedTasas?.tasa_a || ''}
+                        onChange={handleInputChange}
+                      />
+                      <TextField
+                        sx={{ m: 2 }}
+                        label="B"
+                        name="tasa_b"
+                        value={editedTasas?.tasa_b || ''}
+                        onChange={handleInputChange}
+                      />
+                      <TextField
+                        sx={{ m: 2 }}
+                        label="ALFA"
+                        name="tasa_alfa"
+                        value={editedTasas?.tasa_alfa || ''}
+                        onChange={handleInputChange}
+                      />
+                      <TextField
+                        sx={{ m: 2 }}
+                        label="BETA"
+                        name="tasa_beta"
+                        value={editedTasas?.tasa_beta || ''}
+                        onChange={handleInputChange}
+                      />
+                      <TextField
+                        sx={{ m: 2 }}
+                        label="GAMMA"
+                        name="tasa_gamma"
+                        value={editedTasas?.tasa_gamma || ''}
                         onChange={handleInputChange}
                       />
                       <Box mt={2} display='flex' justifyContent='flex-end'>
@@ -262,7 +219,7 @@ export const TipoActivoTable = () => {
                           Cancelar
                         </Button>
                         <Button
-                          sx={{ m: 2, alignContent: 'end' }} variant="contained" onClick={handleSaveTipoActivo}>
+                          sx={{ m: 2, alignContent: 'end' }} variant="contained" onClick={handleSaveTasas}>
                           Guardar
                         </Button>
                       </Box>
@@ -274,17 +231,17 @@ export const TipoActivoTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Box m={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      {/* <Box m={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button
           variant="outlined"
           color="primary"
-          onClick={handleToggleNewTipoActivo}
+          onClick={handleToggleNewEstado}
         >
           Añadir
         </Button>
         <Backdrop
           sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={openNewTipoActivo}
+          open={openNewEstado}
         >
           <Box
             textAlign='center'
@@ -296,18 +253,18 @@ export const TipoActivoTable = () => {
               boxShadow: '0 2px 5px rgba(0, 0, 0, 0.25)'
             }}
           >
-            <Typography color='black'>Agregar Tipo de Activo</Typography>
-            <Box component='form' onSubmit={handleSubmitNewTipoActivo} m={2} p={2}>
+            <Typography color='black'>Agregar Estado</Typography>
+            <Box component='form' onSubmit={handleSubmitNewEstado} m={2} p={2}>
               <TextField
                 sx={{ mb: 2 }}
                 label='Nombre'
-                value={newTipoActivo}
-                onChange={(e) => setNewTipoActivo(e.target.value)}
+                value={newEstado}
+                onChange={(e) => setNewEstado(e.target.value)}
                 fullWidth
                 required
               />
               <Box mt={2} display='flex' justifyContent='flex-end'>
-                <Button onClick={handleCloseNewTipoActivo} disabled={submitting}>
+                <Button onClick={handleCloseNewEstado} disabled={submitting}>
                   Cancelar
                 </Button>
                 <Button
@@ -358,14 +315,14 @@ export const TipoActivoTable = () => {
         <DialogTitle>Confirmar eliminación</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro de que quieres eliminar este Tipo de Activo?
+            ¿Estás seguro de que quieres eliminar este Estado?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShowDeleteDialog(false)}>Cancelar</Button>
           <Button onClick={handleConfirmDelete}>Eliminar</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }

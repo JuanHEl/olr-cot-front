@@ -2,7 +2,7 @@ import React from 'react'
 import { Tabs, Tab } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { UsuariosTables, TipoActivoTable, ModeloTable, MarcaTable } from '../tables';
+import { UsuariosTables, TipoActivoTable, ModeloTable, MarcaTable, EstadoActivo, OtrosGastos, Editables, TablaResidual, Tasas } from '../tables';
 
 const tabsOptions = ["Usuario", "Tipo activo", "Modelo", "Marca", "Estado", "Tabla residual", "Otros gastos", "Editables", "Tasas"];
 
@@ -69,22 +69,27 @@ export const TabAdminTabs = () => {
                                         index === 4 ?
                                             <Box key={index} m={1}>
                                                 <Typography> {label} </Typography>
+                                                <EstadoActivo />
                                             </Box> :
                                             index === 5 ?
                                                 <Box key={index} m={1}>
                                                     <Typography> {label} </Typography>
+                                                    <TablaResidual />
                                                 </Box> :
                                                 index === 6 ?
                                                     <Box key={index} m={1}>
                                                         <Typography> {label} </Typography>
+                                                        <OtrosGastos />
                                                     </Box> :
                                                     index === 7 ?
                                                         <Box key={index} m={1}>
                                                             <Typography> {label} </Typography>
+                                                            <Editables />
                                                         </Box> :
                                                         index === 8 ?
                                                             <Box key={index} m={1}>
                                                                 <Typography> {label} </Typography>
+                                                                <Tasas />
                                                             </Box> : ''
                         :
                         ''
