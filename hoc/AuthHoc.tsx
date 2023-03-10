@@ -22,7 +22,7 @@ export const AuthHoc: FC<Props> = ({ children }) => {
     }, [])
 
     useEffect(() => {
-        console.log({ pathname, isLogged, authorization })
+        // console.log({ pathname, isLogged, authorization })
         if (pathname != '/' && pathname != '/login' && !isLogged) {
             router.replace('/login')
         }
