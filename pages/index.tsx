@@ -5,6 +5,7 @@ import React, { FormEvent, useEffect, useState } from 'react'
 // import { yupResolver } from '@hookform/resolvers/yup';
 // import * as yup from "yup";
 import { useRouter } from 'next/router';
+import { AdministratorsMainOptions } from "../components/sections/rolePage/AdministratorsMainOptions";
 
 // type InputsForm = {
 //   valorResidual: string,
@@ -154,6 +155,8 @@ export default function Home() {
     // console.log({ valorFactura, valorAccesorios, valorRentas, valorFondoReservaMensual, valorComisionApertura, valorSeguroAnualC, valorOtrosGastos, valorFondoReserva, valorResidual })
     // cotiza()
   }
+
+  return <AdministratorsMainOptions />
 
   return (
     <Container sx={{ mt: 5 }}>

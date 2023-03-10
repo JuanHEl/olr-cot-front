@@ -1,4 +1,15 @@
-
+:root {
+  --dark-blue-color: #1f3554;
+  --light-blue-color: #ced5dc;
+  --neutral-blue-color: #0a63ae;
+  --light-grey-color: #dcdcdc;
+  --dark-grey-color: #707070;
+  --dark-green-color: #2a5a2e;
+  --ligth1-green-color: #59994d;
+  --light2-green-color: #5ea242;
+  --desaturated-red-color: #ac4343;
+  --normal-pink-color: #e2bdbd;
+}
 
 * {
   box-sizing: border-box;
@@ -8,6 +19,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  font-family: "Raleway";
 }
 
 body {
