@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { axiosInstances } from '../../instances/axiosInstances';
 import { getCookie } from 'cookies-next';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import {
   Table,
   TableBody,
@@ -10,17 +11,9 @@ import {
   TableRow,
   Paper,
   Button,
-  Checkbox,
-  Popover,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Box,
   Typography,
   TextField,
-  CircularProgress,
   Backdrop,
   styled
 } from '@mui/material';
@@ -39,14 +32,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-// El estilo del popover que se activa cuando no se tiene seleccionado un administrador para eliminar
-const StyledPopover = styled(Popover)(({ theme }) => ({
-  '& .MuiPopover-paper': {
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
 // Se declaran de que tipo serán las variables
 interface tasas {
   id: number;
@@ -57,6 +42,8 @@ interface tasas {
   tasa_beta: number;
   tasa_gamma: number
 }
+
+const selectedTipoActivo = ['Autos', 'Tracto Camión', 'Bicicletas']
 
 export const Tasas = () => {
 
@@ -98,7 +85,7 @@ export const Tasas = () => {
           setTasas(tasas.map((tipoA) => (tipoA.id === editedTasas.id ? editedTasas : tipoA)));
           setEditedTasas(null);
           setAnchorEl(null);
-          fetchEstado();
+          fetchTasas();
         }
       } catch (error) {
         console.log(error);
@@ -106,15 +93,17 @@ export const Tasas = () => {
     }
   };
 
-  useEffect(() => {
-    fetchEstado();
-  }, []);
+  const [tipoActivo, setTipoActivo] = useState('Autos') // constante que va a determinar el valor para realizar la petición para el tipo de activo
 
-  const fetchEstado = async () => {
+  const handleChangeTipoActivo = (event: SelectChangeEvent) => {
+    setTipoActivo(event.target.value as string);
+    fetchTasas()
+  };
+
+  const fetchTasas = async () => {
     const token = getCookie('TOKEN');
-    const tipo_activo = 'Autos';
     try {
-      const response = await axiosInstances.get(`valores_tasas/${tipo_activo}`, {
+      const response = await axiosInstances.get(`valores_tasas/${tipoActivo}`, {
         headers: { 'TOKEN': token }
       });
       // console.log('El response es:', response.data.data)
@@ -126,9 +115,30 @@ export const Tasas = () => {
       console.log(error);
     }
   }
+  
+  useEffect(() => {
+    fetchTasas();
+  }, [tipoActivo]);
+
 
   return (
     <>
+      <Box sx={{ minWidth: 120, m:2 }}>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Tipo de activo</InputLabel>
+          <Select
+            value={tipoActivo}
+            label="Tipo de activo"
+            onChange={handleChangeTipoActivo}
+          >
+            {selectedTipoActivo.map((tipoAct) => (
+              <MenuItem key={tipoAct} value={tipoAct}>
+                {tipoAct}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
       <TableContainer component={Paper}>
         <Table aria-label="Tipo de Activos">
           <TableHead>
@@ -231,98 +241,6 @@ export const Tasas = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* <Box m={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={handleToggleNewEstado}
-        >
-          Añadir
-        </Button>
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={openNewEstado}
-        >
-          <Box
-            textAlign='center'
-            p={2}
-            sx={{
-              m: 2,
-              backgroundColor: 'Menu',
-              borderRadius: '10px',
-              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.25)'
-            }}
-          >
-            <Typography color='black'>Agregar Estado</Typography>
-            <Box component='form' onSubmit={handleSubmitNewEstado} m={2} p={2}>
-              <TextField
-                sx={{ mb: 2 }}
-                label='Nombre'
-                value={newEstado}
-                onChange={(e) => setNewEstado(e.target.value)}
-                fullWidth
-                required
-              />
-              <Box mt={2} display='flex' justifyContent='flex-end'>
-                <Button onClick={handleCloseNewEstado} disabled={submitting}>
-                  Cancelar
-                </Button>
-                <Button
-                  type='submit'
-                  variant='contained'
-                  color='primary'
-                  disabled={submitting}
-                >
-
-                  {submitting ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    'Guardar'
-                  )}
-                </Button>
-              </Box>
-            </Box>
-          </Box>
-        </Backdrop>
-        <Button variant="outlined" color="error" onClick={handleDelete}>
-          Eliminar
-        </Button>
-      </Box>
-      <Box>
-        <StyledPopover
-          id={id}
-          open={open}
-          anchorEl={anchorEl1}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-        >
-          <Box>
-            <Typography>Selecciona el elemento que se desea eliminar</Typography>
-          </Box>
-        </StyledPopover>
-      </Box>
-      <Dialog
-        open={showDeleteDialog}
-        onClose={() => setShowDeleteDialog(false)}
-      >
-        <DialogTitle>Confirmar eliminación</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            ¿Estás seguro de que quieres eliminar este Estado?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowDeleteDialog(false)}>Cancelar</Button>
-          <Button onClick={handleConfirmDelete}>Eliminar</Button>
-        </DialogActions>
-      </Dialog> */}
     </>
   );
 }
