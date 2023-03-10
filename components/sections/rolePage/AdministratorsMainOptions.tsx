@@ -23,18 +23,18 @@ const OPTIONS: AOProps[] = [
     title: "Cotizador",
     id: 3,
     icon: (props) => (
-      <Box sx={{display: 'flex'}}>
+      <Box sx={{ display: "flex" }}>
         <RequestQuoteRoundedIcon {...props} />
         <Divider
-          orientation="vertical"
-          flexItem
-          style={{
+          sx={{
             display: "inline-block",
             width: "6px",
             borderRadius: "40px",
             backgroundColor: "var(--dark-blue-color)",
-            margin: "0 40px",
+            mx: { sm: "40px", xs: "15px" },
           }}
+          orientation="vertical"
+          flexItem
         />
         <RequestQuoteOutlinedIcon {...props} />
       </Box>
