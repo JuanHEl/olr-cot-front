@@ -1,4 +1,4 @@
-import { Box, SxProps, Typography } from "@mui/material";
+import { Box, Divider, SxProps, Typography } from "@mui/material";
 import React, { FC } from "react";
 import BackupTableRoundedIcon from "@mui/icons-material/BackupTableRounded";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
@@ -23,15 +23,19 @@ const OPTIONS: AOProps[] = [
     title: "Cotizador",
     id: 3,
     icon: (props) => (
-      <Box>
+      <Box sx={{display: 'flex'}}>
         <RequestQuoteRoundedIcon {...props} />
-        {/* <Box
-          sx={{
-            width: "3px",
-            height: "80%",
-            bgcolor: "var(--dark-blue-color)",
+        <Divider
+          orientation="vertical"
+          flexItem
+          style={{
+            display: "inline-block",
+            width: "6px",
+            borderRadius: "40px",
+            backgroundColor: "var(--dark-blue-color)",
+            margin: "0 40px",
           }}
-        /> */}
+        />
         <RequestQuoteOutlinedIcon {...props} />
       </Box>
     ),
