@@ -1,34 +1,33 @@
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { getCookie } from 'cookies-next';
-import { setCotizacion,setMoverPlazo } from '../../store/slices';
-import { RootState } from '../../store/index';
-import { url } from 'inspector';
-import { BaseForm } from '../../components/cards/cardForms/BaseForm';
-import { Container, Typography, Box, Button } from '@mui/material';
-import { SkeletonCotizador } from '../../components/skeletons/SkeletonCotizador';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { getCookie } from "cookies-next";
+import { setCotizacion, setMoverPlazo } from "../../store/slices";
+import { RootState } from "../../store/index";
+import { url } from "inspector";
+import { BaseForm } from "../../components/cards/cardForms/BaseForm";
+import { Container, Typography, Box, Button } from "@mui/material";
+import { SkeletonCotizador } from "../../components/skeletons/SkeletonCotizador";
+import { GetStaticProps } from "next";
+import { ProtectedPageTypes } from "../../interfaces/dataInterfaces";
 
-
-export default function cotizadorHome(){
-
-  const router = useRouter()
+export default function cotizadorHome() {
+  const router = useRouter();
   // const dispatch = useDispatch()
-  const token = getCookie('TOKEN')
+  const token = getCookie("TOKEN");
 
   // variable que determina si ya cargó y está correctamente verificado
-  const [loading, setLoading] = useState(true)
-  
+  const [loading, setLoading] = useState(true);
+
   // Verifica si es un usuario verificado con un token
-  useEffect(()=>{
+  useEffect(() => {
     // if(!token) router.push('/login')
     setTimeout(() => {
-      setLoading(false)
-    }, 600)
-  },[])
+      setLoading(false);
+    }, 600);
+  }, []);
 
-  
   // const hacerestado = () =>{
   //   let cotizacion = {
   //     factura:'hola',
@@ -45,24 +44,17 @@ export default function cotizadorHome(){
   //   dispatch(setCotizacion(cotizacion))
   //   // console.log('Imprimiendo dentro del boton',estado)
   // }
-  
+
   // const { plazo } = useSelector((state:RootState)=>state.cotizacion)
   // console.log('Imprimiendo el estado del useSelector',estado)
 
-
-  // Condicional que imprime un skeleton previo a cargar la vista 
+  // Condicional que imprime un skeleton previo a cargar la vista
   // if(loading) return <SkeletonCotizador/>
-  
+
   return (
     <Container>
-      <Box>
-        {
-          loading?
-          <SkeletonCotizador/>:
-          <BaseForm/>
-        }
-      </Box>
-        {/* <Button onClick={() => dispatch(setCotizacion({
+      <Box>{loading ? <SkeletonCotizador /> : <BaseForm />}</Box>
+      {/* <Button onClick={() => dispatch(setCotizacion({
           factura:'hello',
           accesorios:'hello',
           rentas:'hello',
@@ -76,5 +68,14 @@ export default function cotizadorHome(){
         })) }>hacer estado</Button>
         <h1>El estado es: {plazo}</h1> */}
     </Container>
-  )
+  );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {
+      restricted: true,
+      userAllowed: ["Administrador"],
+    },
+  };
+};

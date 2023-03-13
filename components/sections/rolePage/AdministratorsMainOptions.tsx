@@ -6,6 +6,10 @@ import RequestQuoteRoundedIcon from "@mui/icons-material/RequestQuoteRounded";
 import RequestQuoteOutlinedIcon from "@mui/icons-material/RequestQuoteOutlined";
 import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
 import FormatListBulletedRoundedIcon from "@mui/icons-material/FormatListBulletedRounded";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import { roles } from "../../../interfaces/storeInterfaces/sliceAdminInterface";
+import { useRouter } from "next/router";
 
 //OPCIONES DEL ADMINISTRADOR
 const OPTIONS: AOProps[] = [
@@ -13,11 +17,13 @@ const OPTIONS: AOProps[] = [
     title: "Tablas",
     id: 1,
     icon: (props) => <BackupTableRoundedIcon {...props} />,
+    path: "/administrador",
   },
   {
     title: "Dashboard",
     id: 2,
     icon: (props) => <DashboardRoundedIcon {...props} />,
+    path: "/",
   },
   {
     title: "Cotizador",
@@ -25,38 +31,51 @@ const OPTIONS: AOProps[] = [
     icon: (props) => (
       <Box sx={{ display: "flex" }}>
         <RequestQuoteRoundedIcon {...props} />
-        <Divider
-          sx={{
-            display: "inline-block",
-            width: "6px",
-            borderRadius: "40px",
-            backgroundColor: "var(--dark-blue-color)",
-            mx: { sm: "40px", xs: "15px" },
-          }}
-          orientation="vertical"
-          flexItem
-        />
+        <Divider sx={dividerStyles} orientation="vertical" flexItem />
         <RequestQuoteOutlinedIcon {...props} />
       </Box>
     ),
+    path: "/cotizador",
   },
   {
     title: "Calculadora",
     id: 4,
     icon: (props) => <CalculateOutlinedIcon {...props} />,
+    path: "/",
+  },
+  {
+    title: "Checklist",
+    id: 5,
+    icon: (props) => <FormatListBulletedRoundedIcon {...props} />,
+    path: "/",
   },
 ];
 
+const ALLOWED: {
+  [key in roles as string]: number[];
+} = {
+  Administrador: [1, 2, 3, 4],
+  Promotor: [3, 4],
+  Validador: [5],
+};
+
 //COMPONENTE PRINCIPAL DEL ARCHIVO
 export const AdministratorsMainOptions = () => {
+  //REDUX
+  const { authorization } = useSelector((state: RootState) => state.auth);
+  //REDUX
+
   return (
     <Box sx={bgContainerStyles}>
       <Box sx={optionsContainerStyles}>
-        {OPTIONS.map((option) => (
-          <Box key={option.id} sx={optionItemContainerStyles}>
-            <AdministratorOption {...option} />
-          </Box>
-        ))}
+        {authorization &&
+          OPTIONS.filter((option) =>
+            ALLOWED[authorization as string].includes(option.id)
+          ).map((option) => (
+            <Box key={option.id} sx={optionItemContainerStyles}>
+              <AdministratorOption {...option} />
+            </Box>
+          ))}
       </Box>
     </Box>
   );
@@ -67,13 +86,12 @@ type AOProps = {
   id: number;
   title: string;
   icon: (props: { sx: SxProps }) => JSX.Element;
+  path: string;
 };
-const AdministratorOption: FC<AOProps> = ({ title, icon }) => {
+const AdministratorOption: FC<AOProps> = ({ title, icon, path }) => {
+  const router = useRouter();
   return (
-    <Box
-      sx={optionItemStyles}
-      onClick={() => console.log("you had press " + title)}
-    >
+    <Box sx={optionItemStyles} onClick={() => router.push(path)}>
       <Box sx={optionItemIconsContainerStyles}>
         {icon({ sx: optionItemIconsStyles })}
       </Box>
@@ -91,16 +109,17 @@ const bgContainerStyles: SxProps = {
   alignContent: "center",
 };
 const optionsContainerStyles: SxProps = {
-  width: "1400px",
+  width: "1200px",
   maxWidth: "95%",
   display: "flex",
   flexWrap: "wrap",
   alignContent: "center",
-  gap: "20px",
+  gap: { md: "60px", xs: "20px" },
+  pb: { lg: 0, xs: 5 },
 };
 const optionItemContainerStyles: SxProps = {
   flex: 1,
-  minWidth: { sm: "500px", xs: "95%" },
+  minWidth: { sm: "400px", xs: "95%" },
 };
 //ESTILOS DEL COMPONENTE PRINCIPAL
 //ESTILOS PARA EL COMPONENTE ITEMOPTION
@@ -113,7 +132,7 @@ const optionItemStyles: SxProps = {
   boxShadow: "0 0 20px rgba(0,0,0, 0.25)",
 };
 const optionItemIconsContainerStyles: SxProps = {
-  minHeight: "250px",
+  minHeight: { sm: "200px", xs: "150px" },
   bgcolor: "white",
   display: "flex",
   justifyContent: "center",
@@ -121,15 +140,24 @@ const optionItemIconsContainerStyles: SxProps = {
 };
 const optionItemTitleStyles: SxProps = {
   textAlign: "center",
-  fontSize: "38px",
+  fontSize: { sm: "38px", xs: "24px" },
   fontWeight: "600",
   color: "white",
-  py: 3,
+  py: 2,
 };
 
 const optionItemIconsStyles: SxProps = {
-  width: "150px",
-  height: "150px",
+  width: { sm: "150px", xs: "85px" },
+  height: { sm: "150px", xs: "85px" },
   color: "var(--dark-blue-color)",
 };
 //ESTILOS PARA EL COMPONENTE ITEMOPTION
+
+//ESTILOS AISLADOS
+const dividerStyles: SxProps = {
+  display: "inline-block",
+  width: "6px",
+  borderRadius: "40px",
+  backgroundColor: "var(--dark-blue-color)",
+  mx: { sm: "40px", xs: "15px" },
+};

@@ -1,8 +1,12 @@
-
-export interface tipoAdmin{
-    isLogged:boolean,
-    authorization: roles,
-    nombre:string
+export interface tipoAdmin {
+  isLogged: boolean;
+  authorization: roles;
+  nombre: string;
 }
 
-export type roles='Administrador' | 'Promotor' | 'Super_Administrador' | null
+export type roles =
+  | "Administrador"
+  | "Promotor"
+  | "Validador"
+  | "Cliente"
+  | null;

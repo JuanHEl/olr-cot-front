@@ -1,13 +1,22 @@
-import React from 'react'
-import { Container, Box } from '@mui/material';
-import { LoginForm } from '../../components/cards/cardLogin';
+import React from "react";
+import { Container, Box } from "@mui/material";
+import { LoginForm } from "../../components/cards/cardLogin";
 
-export default function loginHome(){
+export default function loginHome() {
   return (
     <Container>
       <Box>
-        <LoginForm/>
+        <LoginForm />
       </Box>
     </Container>
-  )
+  );
 }
+
+export const getStaticProps = async () => {
+  return {
+    props: {
+      protected: false,
+      userAllowed: [],
+    },
+  };
+};
