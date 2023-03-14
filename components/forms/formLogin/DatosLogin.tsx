@@ -74,7 +74,7 @@ export const DatosLogin = () => {
     event.preventDefault();
     try {
       const response = await axios.post<dataInfo>(
-        "http://localhost:8006/api/administrador/login",
+        "http://localhost:8006/api/usuarios/login",
         {
           email: emailState.value,
           password: passwordState.value,
